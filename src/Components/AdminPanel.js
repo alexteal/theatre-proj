@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Css/AdminPanel.css";
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { getDatabase, ref, set } from "firebase/database";
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
@@ -17,7 +17,17 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+function writeMovieData(movieName, movieUrl) {
+    const db = getDatabase();
+    const reference = ref(db, "movies/" + movieName);
+
+    set(reference, {
+        movie: movieName,
+        url: movieUrl,
+    });
+}
+
 const AdminPanel = ({
     currentlyRunning,
     setCurrentlyRunning,
