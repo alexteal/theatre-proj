@@ -1,0 +1,51 @@
+/* ./Css/Homepage.css */
+
+/* Styles for the main container */
+.home {
+  background-color: #f0f0f0;
+  text-align: center;
+}
+
+/* Styles for the header */
+/* You can style the 'Header' component separately in its own CSS file */
+
+/* Styles for the welcome message */
+h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* Styles for the movie section */
+.movie-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex-wrap: wrap;
+}
+
+/* Styles for each movie poster section */
+.movie-posters {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin: 10px;
+  text-align: center;
+}
+
+/* Styles for the movie list */
+/* You can style the 'MovieList' component separately in its own CSS file */
+
+/* Styles for the "Currently Running" and "Coming Soon" headers */
+.welcome {
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+
+.coming , .current{
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+/* Additional styles for movie posters or movie list items can be added here */
+
+/* Media queries for responsive design can also be added here */

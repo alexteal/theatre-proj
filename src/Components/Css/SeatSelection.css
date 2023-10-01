@@ -1,0 +1,35 @@
+.seat-layout {
+  text-align: center;
+}
+
+.screen {
+  background-color: #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.seat-row-label {
+  flex: 0.03;
+  font-size: 18px;
+}
+
+.seat {
+  width: 30px;
+  height: 30px;
+  margin: 0 5px;
+  background-color: #f3f3f3;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.seat.selected {
+  background-color: green;
+}
