@@ -149,6 +149,13 @@ const AdminPanel = () => {
                                 }
                                 placeholder="Trailer URL"
                             />
+                            <input
+                                value={newMovieThumbnail}
+                                onChange={(e) =>
+                                    setNewMovieThumbnail(e.target.value)
+                                }
+                                placeholder="Thumbail URL"
+                            />
                             <button onClick={() => handleAddMovie(true)}>
                                 Add to Currently Running
                             </button>
