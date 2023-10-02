@@ -10,31 +10,39 @@ const AdminPanel = () => {
     const [newMovieTitle, setNewMovieTitle] = useState("");
     const [newMovieTrailerUrl, setNewMovieTrailerUrl] = useState("");
     const [movies, setMovies] = useState({});
+    const [editedThumbnail, setEditedThumbnail] = useState("");
+    const [newMovieThumbnail, setNewMovieThumbnail] = useState("");
     useEffect(() => {
         getMovies().then((movies) => setMovies(movies));
     }, []);
     const handleSelectMovie = (movieName) => {
         if (movies[movieName]) {
             setSelectedMovie(movieName);
-            setEditedTitle(movieName);
-            setEditedTrailerUrl(movies[movieName].url);
+            setEditedTitle(movies[movieName].title);
+            setEditedTrailerUrl(movies[movieName].trailerUrl);
+            setEditedThumbnail(movies[movieName].thumbnail);
         }
     };
     const handleUpdateMovie = () => {
         writeMovieData(
             editedTitle,
             editedTrailerUrl,
+            editedThumbnail,
             movies[selectedMovie].running
         ).then(() => getMovies().then((movies) => setMovies(movies)));
     };
     const handleAddMovie = (runningStatus) => {
-        writeMovieData(newMovieTitle, newMovieTrailerUrl, runningStatus).then(
-            () => {
-                setNewMovieTitle("");
-                setNewMovieTrailerUrl("");
-                getMovies().then((movies) => setMovies(movies));
-            }
-        );
+        writeMovieData(
+            newMovieTitle,
+            newMovieTrailerUrl,
+            newMovieThumbnail,
+            runningStatus
+        ).then(() => {
+            setNewMovieTitle("");
+            setNewMovieTrailerUrl("");
+            setNewMovieThumbnail("");
+            getMovies().then((movies) => setMovies(movies));
+        });
     };
     const handleDeleteMovie = (movieName) => {
         deleteMovieData(movieName)

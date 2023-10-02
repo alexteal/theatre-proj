@@ -12,14 +12,17 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export function writeMovieData(movieName, movieUrl, runningStatus) {
+
+export function writeMovieData(title, trailerUrl, thumbnail, runningStatus) {
     return new Promise((resolve, reject) => {
         try {
             const db = getDatabase(app);
-            const reference = ref(db, "movies/" + movieName);
+            const reference = ref(db, "movies/" + title);
             set(reference, {
+                title: title,
+                trailerUrl: trailerUrl,
+                thumbnail: thumbnail,
                 running: runningStatus,
-                url: movieUrl,
             })
                 .then(() => resolve())
                 .catch((error) => reject(error));
@@ -28,6 +31,7 @@ export function writeMovieData(movieName, movieUrl, runningStatus) {
         }
     });
 }
+
 export function getMovies() {
     return new Promise((resolve, reject) => {
         const db = getDatabase(app);
@@ -44,6 +48,7 @@ export function getMovies() {
         );
     });
 }
+
 export function deleteMovieData(movieName) {
     return new Promise((resolve, reject) => {
         try {
