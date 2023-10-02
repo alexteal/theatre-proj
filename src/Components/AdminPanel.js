@@ -1,73 +1,52 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Css/AdminPanel.css";
-
-const AdminPanel = ({
-    currentlyRunning,
-    setCurrentlyRunning,
-    comingSoon,
-    setComingSoon,
-}) => {
+import { writeMovieData, getMovies, deleteMovieData } from "./Database";
+const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState("manageMovies");
     const [selectedMovie, setSelectedMovie] = useState(null);
     const [editedTitle, setEditedTitle] = useState("");
     const [editedTrailerUrl, setEditedTrailerUrl] = useState("");
     const [newMovieTitle, setNewMovieTitle] = useState("");
     const [newMovieTrailerUrl, setNewMovieTrailerUrl] = useState("");
-
-    const handleSelectMovie = (movie, category) => {
-        setSelectedMovie(movie);
-        setEditedTitle(movie.title);
-        setEditedTrailerUrl(movie.trailerUrl);
+    const [movies, setMovies] = useState({});
+    useEffect(() => {
+        getMovies().then((movies) => setMovies(movies));
+    }, []);
+    const handleSelectMovie = (movieName) => {
+        if (movies[movieName]) {
+            setSelectedMovie(movieName);
+            setEditedTitle(movieName);
+            setEditedTrailerUrl(movies[movieName].url);
+        }
     };
-
     const handleUpdateMovie = () => {
-        const updatedCurrentlyRunning = currentlyRunning.map((movie) =>
-            movie === selectedMovie
-                ? { ...movie, title: editedTitle, trailerUrl: editedTrailerUrl }
-                : movie
+        writeMovieData(
+            editedTitle,
+            editedTrailerUrl,
+            movies[selectedMovie].running
+        ).then(() => getMovies().then((movies) => setMovies(movies)));
+    };
+    const handleAddMovie = (runningStatus) => {
+        writeMovieData(newMovieTitle, newMovieTrailerUrl, runningStatus).then(
+            () => {
+                setNewMovieTitle("");
+                setNewMovieTrailerUrl("");
+                getMovies().then((movies) => setMovies(movies));
+            }
         );
-        const updatedComingSoon = comingSoon.map((movie) =>
-            movie === selectedMovie
-                ? { ...movie, title: editedTitle, trailerUrl: editedTrailerUrl }
-                : movie
-        );
-
-        setCurrentlyRunning(updatedCurrentlyRunning);
-        setComingSoon(updatedComingSoon);
     };
-
-    const handleAddMovie = (category) => {
-        const newMovie = {
-            title: newMovieTitle,
-            trailerUrl: newMovieTrailerUrl,
-        };
-
-        if (category === "currentlyRunning") {
-            setCurrentlyRunning([...currentlyRunning, newMovie]);
-        } else if (category === "comingSoon") {
-            setComingSoon([...comingSoon, newMovie]);
-        }
-        setNewMovieTitle("");
-        setNewMovieTrailerUrl("");
+    const handleDeleteMovie = (movieName) => {
+        deleteMovieData(movieName)
+            .then(() => {
+                const updatedMovies = { ...movies };
+                delete updatedMovies[movieName];
+                setMovies(updatedMovies);
+                setSelectedMovie(null);
+                getMovies().then((movies) => setMovies(movies));
+            })
+            .catch((error) => console.error(error));
     };
-
-    const handleDeleteMovie = (movie, category) => {
-        if (category === "currentlyRunning") {
-            const updatedCurrentlyRunning = currentlyRunning.filter(
-                (item) => item !== movie
-            );
-            setCurrentlyRunning(updatedCurrentlyRunning);
-        } else if (category === "comingSoon") {
-            const updatedComingSoon = comingSoon.filter(
-                (item) => item !== movie
-            );
-            setComingSoon(updatedComingSoon);
-        }
-
-        setSelectedMovie(null);
-    };
-
     const renderContent = () => {
         switch (activeTab) {
             case "manageMovies":
@@ -76,57 +55,53 @@ const AdminPanel = ({
                         <h3>Manage Movies</h3>
                         <div>
                             <h4>Currently Running</h4>
-                            {currentlyRunning.map((movie, index) => (
-                                <div key={index}>
-                                    <button
-                                        onClick={() =>
-                                            handleSelectMovie(
-                                                movie,
-                                                "currentlyRunning"
-                                            )
-                                        }
-                                    >
-                                        {movie.title}
-                                    </button>
-                                    <button
-                                        onClick={() =>
-                                            handleDeleteMovie(
-                                                movie,
-                                                "currentlyRunning"
-                                            )
-                                        }
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            ))}
+                            {Object.keys(movies)
+                                .filter(
+                                    (movieName) => movies[movieName].running
+                                )
+                                .map((movieName, index) => (
+                                    <div key={index}>
+                                        <button
+                                            onClick={() =>
+                                                handleSelectMovie(movieName)
+                                            }
+                                        >
+                                            {movieName}
+                                        </button>
+                                        <button
+                                            onClick={() =>
+                                                handleDeleteMovie(movieName)
+                                            }
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                ))}
                         </div>
                         <div>
                             <h4>Coming Soon</h4>
-                            {comingSoon.map((movie, index) => (
-                                <div key={index}>
-                                    <button
-                                        onClick={() =>
-                                            handleSelectMovie(
-                                                movie,
-                                                "comingSoon"
-                                            )
-                                        }
-                                    >
-                                        {movie.title}
-                                    </button>
-                                    <button
-                                        onClick={() =>
-                                            handleDeleteMovie(
-                                                movie,
-                                                "comingSoon"
-                                            )
-                                        }
-                                    >
-                                        Delete
-                                    </button>
-                                </div>
-                            ))}
+                            {Object.keys(movies)
+                                .filter(
+                                    (movieName) => !movies[movieName].running
+                                )
+                                .map((movieName, index) => (
+                                    <div key={index}>
+                                        <button
+                                            onClick={() =>
+                                                handleSelectMovie(movieName)
+                                            }
+                                        >
+                                            {movieName}
+                                        </button>
+                                        <button
+                                            onClick={() =>
+                                                handleDeleteMovie(movieName)
+                                            }
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                ))}
                         </div>
                         {selectedMovie && (
                             <div>
@@ -166,16 +141,10 @@ const AdminPanel = ({
                                 }
                                 placeholder="Trailer URL"
                             />
-                            <button
-                                onClick={() =>
-                                    handleAddMovie("currentlyRunning")
-                                }
-                            >
+                            <button onClick={() => handleAddMovie(true)}>
                                 Add to Currently Running
                             </button>
-                            <button
-                                onClick={() => handleAddMovie("comingSoon")}
-                            >
+                            <button onClick={() => handleAddMovie(false)}>
                                 Add to Coming Soon
                             </button>
                         </div>
@@ -185,7 +154,6 @@ const AdminPanel = ({
                 return null;
         }
     };
-
     return (
         <div className="admin-panel">
             <nav className="admin-nav">
@@ -202,5 +170,4 @@ const AdminPanel = ({
         </div>
     );
 };
-
 export default AdminPanel;
