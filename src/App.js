@@ -1,7 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import Homepage from "./Components/Homepage";
 import Signup from "./Components/Signup";
@@ -10,12 +10,37 @@ import AdminPanel from "./Components/AdminPanel";
 import Booking from "./Components/Booking";
 import Checkout from "./Components/Checkout";
 import EditProfile from "./Components/Edit";
+import { getMovies } from "./Components/Database";
 
 import movie1image from "./Components/images/movie1.jpg";
 import movie2Image from "./Components/images/movie2.jpg";
 import movie3Image from "./Components/images/movie3.jpg";
 
 function App() {
+    const [currentlyRunning, setCurrentlyRunning] = useState([]);
+    const [comingSoon, setComingSoon] = useState([]);
+    useEffect(() => {
+        getMovies().then((movies) => {
+            const currentlyRunningMovies = [];
+            const comingSoonMovies = [];
+            for (const movieName in movies) {
+                const movie = movies[movieName];
+                const movieData = {
+                    poster: movie.thumbnail,
+                    title: movie.title,
+                    trailerUrl: movie.trailerUrl,
+                };
+                if (movie.running) {
+                    currentlyRunningMovies.push(movieData);
+                } else {
+                    comingSoonMovies.push(movieData);
+                }
+            }
+            setCurrentlyRunning(currentlyRunningMovies);
+            setComingSoon(comingSoonMovies);
+        });
+    }, []);
+    /*
     const [currentlyRunning, setCurrentlyRunning] = useState([
         {
             poster: movie1image,
@@ -36,6 +61,7 @@ function App() {
             trailerUrl: "https://www.youtube.com/embed/uvw789",
         },
     ]);
+    */
 
     return (
         /**
