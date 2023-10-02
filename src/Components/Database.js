@@ -12,12 +12,11 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-export function writeMovieData(movieName, movieUrl) {
+export function writeMovieData(movieName, movieUrl, runningStatus) {
     const db = getDatabase(app);
     const reference = ref(db, "movies/" + movieName);
     set(reference, {
-        movie: movieName,
+        running: runningStatus,
         url: movieUrl,
     });
 }
