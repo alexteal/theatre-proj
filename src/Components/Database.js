@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, onValue } from "firebase/database";
+import { remove, getDatabase, ref, set, onValue } from "firebase/database";
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_API_KEY,
     authDomain: process.env.REACT_APP_AUTH_DOMAIN,
@@ -13,18 +13,47 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export function writeMovieData(movieName, movieUrl, runningStatus) {
-    const db = getDatabase(app);
-    const reference = ref(db, "movies/" + movieName);
-    set(reference, {
-        running: runningStatus,
-        url: movieUrl,
+    return new Promise((resolve, reject) => {
+        try {
+            const db = getDatabase(app);
+            const reference = ref(db, "movies/" + movieName);
+            set(reference, {
+                running: runningStatus,
+                url: movieUrl,
+            })
+                .then(() => resolve())
+                .catch((error) => reject(error));
+        } catch (error) {
+            reject(error);
+        }
     });
 }
 export function getMovies() {
-    const db = getDatabase(app);
-    const reference = ref(db, "movies");
-    onValue(reference, (snapshot) => {
-        const data = snapshot.val();
-        console.log(data);
+    return new Promise((resolve, reject) => {
+        const db = getDatabase(app);
+        const reference = ref(db, "movies");
+        onValue(
+            reference,
+            (snapshot) => {
+                const data = snapshot.val();
+                resolve(data ? data : {}); // if data is null or undefined, return an empty object
+            },
+            (error) => {
+                reject(error);
+            }
+        );
+    });
+}
+export function deleteMovieData(movieName) {
+    return new Promise((resolve, reject) => {
+        try {
+            const db = getDatabase(app);
+            const reference = ref(db, "movies/" + movieName);
+            remove(reference)
+                .then(() => resolve())
+                .catch((error) => reject(error));
+        } catch (error) {
+            reject(error);
+        }
     });
 }
