@@ -72,7 +72,7 @@ export function writeTempData(amountOfData) {
                 const theatreRef = ref(db, "theatre/" + i);
                 set(theatreRef, {
                     id: i,
-                    name: faker.company.companyName(),
+                    name: faker.company.name(),
                 });
                 const showRoomRef = ref(db, "showRoom/" + i);
                 set(showRoomRef, {
@@ -127,10 +127,14 @@ export function writeTempData(amountOfData) {
                 const ticketRef = ref(db, "ticket/" + i);
                 set(ticketRef, {
                     ticketID: i,
-                    type: faker.random.arrayElement(["adult", "senior", "kid"]),
+                    type: faker.helpers.arrayElement([
+                        "adult",
+                        "senior",
+                        "kid",
+                    ]),
                     bookingID: i,
                     seat:
-                        faker.random.alpha({ count: 1 }) +
+                        faker.string.alpha({ count: 1 }) +
                         faker.datatype.number({ min: 1, max: 10 }),
                 });
             }
