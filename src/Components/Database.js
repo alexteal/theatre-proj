@@ -79,15 +79,24 @@ export function writeTempData(amountOfData) {
                     theatreID: i,
                     showRoomID: i,
                     numberOfSeats: faker.datatype.number(),
-                    showTimes: faker.date.future(),
+                    showTimes: faker.datatype.number({
+                        min: 1698724800000,
+                        max: 1698724900000,
+                    }),
                 });
                 const showRef = ref(db, "show/" + i);
                 set(showRef, {
                     showID: i,
                     movieID: i,
                     showRoomID: i,
-                    startTime: faker.date.past(),
-                    endTime: faker.date.future(),
+                    startTime: faker.datatype.number({
+                        min: 1698724800000,
+                        max: 1698724900000,
+                    }),
+                    endTime: faker.datatype.number({
+                        min: 1698724800000,
+                        max: 1698724900000,
+                    }),
                 });
                 const movieRef = ref(db, "movie/" + i);
                 set(movieRef, {
@@ -102,8 +111,14 @@ export function writeTempData(amountOfData) {
                 set(promotionRef, {
                     promoID: i,
                     discountAmount: faker.datatype.number({ min: 0, max: 100 }),
-                    startdate: faker.date.past(),
-                    expdate: faker.date.future(),
+                    startdate: faker.datatype.number({
+                        min: 1698724800000,
+                        max: 1698724900000,
+                    }),
+                    expdate: faker.datatype.number({
+                        min: 1698724800000,
+                        max: 1698724900000,
+                    }),
                     code: faker.random.alphaNumeric(10),
                 });
                 const userRef = ref(db, "user/" + i);
@@ -119,10 +134,16 @@ export function writeTempData(amountOfData) {
                     bookingID: i,
                     userID: i,
                     numberOfSeats: faker.datatype.number(),
-                    showTime: faker.date.future(),
+                    showTime: faker.datatype.number({
+                        min: 1698724800000,
+                        max: 1698724900000,
+                    }),
                     promotionID: i,
                     price: faker.commerce.price(),
-                    date: faker.date.future(),
+                    date: faker.datatype.number({
+                        min: 1698724800000,
+                        max: 1698724900000,
+                    }),
                 });
                 const ticketRef = ref(db, "ticket/" + i);
                 set(ticketRef, {
