@@ -33,6 +33,50 @@ export function writeMovieData(title, trailerUrl, thumbnail, runningStatus) {
     });
 }
 
+export function checkUserPassword(email, password) {
+    return new Promise((resolve, reject) => {
+      try {
+        const db = getDatabase(app);
+        const reference = ref(db, "user/" + email);
+        get(reference)
+          .then((snapshot) => {
+            const userData = snapshot.val();
+            if (userData && userData.password === password) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          })
+          .catch((error) => reject(error));
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+export function writeUserData(email, password, firstName, lastName, address, paymentCard) {    
+    return new Promise((resolve, reject) => {
+        try {
+            const db = getDatabase(app);
+            const reference = ref(db, "user/" + email);
+            set(reference, {
+                email: email,
+                password: password,
+                firstName: firstName,
+                lastName: lastName,
+                address: address,
+                paymentCard: paymentCard,
+                status: "active",
+                userType: "user",
+            })
+                .then(() => resolve())
+                .catch((error) => reject(error));
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
 export function getMovies() {
     return new Promise((resolve, reject) => {
         const db = getDatabase(app);
