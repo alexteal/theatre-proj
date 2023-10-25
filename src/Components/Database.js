@@ -54,6 +54,27 @@ export function checkUserPassword(email, password) {
     });
   }
 
+  export function checkUserType(email) {
+    return new Promise((resolve, reject) => {
+        try {
+            const db = getDatabase(app);
+            const reference = ref(db, "user/" + email);
+            get(reference)
+            .then((snapshot) => {
+                const userData = snapshot.val();
+                if (userData && userData.userType === "admin") {
+                resolve(true);
+                } else {
+                resolve(false);
+                }
+            })
+            .catch((error) => reject(error));
+        } catch (error) {
+            reject(error);
+        }
+    });
+  }
+
 export function writeUserData(email, password, firstName, lastName, address, paymentCard) {    
     return new Promise((resolve, reject) => {
         try {
