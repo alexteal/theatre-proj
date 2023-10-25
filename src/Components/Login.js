@@ -2,18 +2,14 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Css/Login.css';
 import {checkUserPassword, checkUserType} from "./Database";
-<<<<<<< HEAD
 import {AdminPanel,renderContent} from "./AdminPanel";
 import {UserPage} from "./UserPage";
-=======
->>>>>>> c4ec3d12ffdfe39ce4f15174fc7f99b36836481c
 
 function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-<<<<<<< HEAD
     //onLogin();
     if(checkUserPassword(email, password) = true){
       if(checkUserType(email) = true){
@@ -23,16 +19,6 @@ function LoginPage({ onLogin }) {
       }
     } else {
       alert("Wrong Email or Password");
-=======
-    if(checkUserPassword(email, password)){
-      if(checkUserType(email)){
-        //onLogin(); //Send To Admin Page
-      } else {
-        //onLogin(); //Send To User Page
-      }
-    } else {
-      alert("Wrong password or email");
->>>>>>> c4ec3d12ffdfe39ce4f15174fc7f99b36836481c
     }
   };
 

@@ -56,7 +56,6 @@ export function checkUserPassword(email, password) {
 
   export function checkUserType(email) {
     return new Promise((resolve, reject) => {
-<<<<<<< HEAD
         try {
             const db = getDatabase(app);
             const reference = ref(db, "user/" + email);
@@ -73,24 +72,6 @@ export function checkUserPassword(email, password) {
         } catch (error) {
             reject(error);
         }
-=======
-      try {
-        const db = getDatabase(app);
-        const reference = ref(db, "user/" + email);
-        get(reference)
-          .then((snapshot) => {
-            const userData = snapshot.val();
-            if (userData && userData.userType === "admin") {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          })
-          .catch((error) => reject(error));
-      } catch (error) {
-        reject(error);
-      }
->>>>>>> c4ec3d12ffdfe39ce4f15174fc7f99b36836481c
     });
   }
 
