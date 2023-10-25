@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Link} from 'react-router-dom';
 import './Css/Login.css';
 import {checkUserPassword, checkUserType} from "./Database";
-import {AdminPanel} from "./AdminPanel";
-import {Homepage} from "./Homepage";
 
 function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('');
@@ -18,8 +16,8 @@ function LoginPage({ onLogin }) {
     }
   };
 
-  if(checkUserPassword(email, password)) {
-    if(checkUserType(email)){
+  if(isLoggedIn) {
+    if(isAdmin){
       return <Link to="/AdminPanel" />;
     } else {
       return <Link to="/" />;
