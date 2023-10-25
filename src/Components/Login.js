@@ -1,24 +1,24 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import './Css/Login.css';
 import {checkUserPassword, checkUserType} from "./Database";
-import {AdminPanel,renderContent} from "./AdminPanel";
+import {AdminPanel} from "./AdminPanel";
 import {UserPage} from "./UserPage";
 
 function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [redirectUrl, setRedirectUrl] = useState(null);
 
   const handleLogin = () => {
-    //onLogin();
     if(checkUserPassword(email, password) = true){
       if(checkUserType(email) = true){
-        AdminPanel(); //Does this Work?
+        setRedirectUrl('/adminpanel');
       } else {
-        UserPage(); //Does this also work?
+        setRedirectUrl('/homepage');
       }
     } else {
-      alert("Wrong Email or Password");
+      setRedirectUrl('/login'); 
     }
   };
 
@@ -69,6 +69,7 @@ function LoginPage({ onLogin }) {
           <i style={{ '--clr': '#fffd44' }}></i>
         </div>
       </div>
+      {redirectUrl && <Redirect to={redirectUrl} />}
     </>
   );
 }
