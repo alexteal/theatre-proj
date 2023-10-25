@@ -10,9 +10,11 @@ function LoginPage({ onLogin }) {
   const [isAdmin, setisAdmin] = useState(false);
 
   const handleLogin = () => {
-    if(checkUserPassword(email, password) = true){
+    if(checkUserPassword(email, password)){
       setIsLoggedIn(true);
       setisAdmin(checkUserType(email));
+    } else {
+      alert("Invalid email or password");
     }
   };
 
