@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Css/Login.css';
+import {checkUserPassword, checkUserType} from "./Database";
 
 function LoginPage({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    //onLogin();
+    if(checkUserPassword(email, password)){
+      if(checkUserType(email)){
+        //onLogin(); //Send To Admin Page
+      } else {
+        //onLogin(); //Send To User Page
+      }
+    } else {
+      alert("Wrong password or email");
+    }
   };
 
   return (
