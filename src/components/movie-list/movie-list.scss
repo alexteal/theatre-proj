@@ -1,0 +1,85 @@
+.movie-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+
+  .movie-poster {
+    margin-bottom: 30px;
+    max-width: 250px;
+    transition: box-shadow 0.3s, transform 0.3s;
+    cursor: pointer;
+
+    h3 {
+      margin-top: 0;
+    }
+  }
+
+  img {
+    width: 250px;
+    min-height: 370px;
+    object-fit: fill;
+    transition: box-shadow 0.3s, transform 0.3s;
+    opacity: 1;
+    visibility: visible;
+    border-radius: 8px;
+
+    &:hover {
+      transform: translateY(-5px);
+    } 
+  }
+
+  .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+}
+
+.trailer-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .trailer-buttons {
+    display: flex;
+    width: 300px;
+    margin-top: 25px;
+    gap: 20px;
+
+    button {
+      color: rgb(255, 255, 255);
+      border-radius: 8px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 8px;
+      width: 100%;
+      position: relative;
+      cursor: pointer;
+      letter-spacing: 0.2px;
+      padding: 12px 8px;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 24px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      &.book-tickets {
+        border: 1px solid rgb(248, 68, 100);
+        background-color: rgb(248, 68, 100);
+      }
+
+      &.close-trailer {
+        border: 1px solid rgb(186 186 186);
+        background-color: rgb(186 186 186);
+        color: black;
+      }
+    }
+  }
+}
