@@ -1,0 +1,138 @@
+/* Booking.css */
+
+/* Styles for the TicketBooking component */
+h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Showtime selection styles */
+h3 {
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Seat selection styles */
+/* You can customize the SeatSelection component separately */
+
+/* Age selection styles */
+div > label {
+  display: block;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+div > select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* Total Price display styles */
+p {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Seat selection CSS */
+
+.seat-layout {
+  text-align: center;
+}
+
+.screen {
+  background-color: #ccc;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.seat-row-label {
+  flex: 0.03;
+  font-size: 18px;
+  color: #b3b3b3;
+}
+
+.seat {
+  width: 30px;
+  height: 30px;
+  margin: 0 5px;
+  background: #fff;
+  border: 1px solid #1ea83c;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:hover {
+    background: #1ea83c;
+    color: #fff;
+  }
+}
+
+.seat.selected {
+  background-color: #1ea83c !important;
+  border-color: #1ea83c;
+  color: #fff;
+}
+
+.book-tickets-container {
+  margin: 25px;
+}
+
+.age-for-each-seat {
+  margin-bottom: 70px;
+  .age-seats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+}
+
+.pay-container {
+  background: #fff;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99;
+  display: flex;
+  justify-content: center;
+  height: 56px;
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+    height: 100%;
+    border-radius: 8px;
+    cursor: pointer;
+    min-height: 40px;
+    max-width: 400px;
+    background: #f84464;
+    color: #fff;
+    border: none;
+  }
+}

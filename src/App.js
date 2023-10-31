@@ -1,104 +1,98 @@
-import logo from "./logo.svg";
-import "./App.css";
-import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
-import React, { useState, useEffect } from "react";
-
-import Homepage from "./Components/Homepage";
-import Signup from "./Components/Signup";
-import Login from "./Components/Login";
-import AdminPanel from "./Components/AdminPanel";
-import Booking from "./Components/Booking";
-import Checkout from "./Components/Checkout";
-import EditProfile from "./Components/Edit";
-import { getMovies } from "./Components/Database";
-
-import movie1image from "./Components/images/movie1.jpg";
-import movie2Image from "./Components/images/movie2.jpg";
-import movie3Image from "./Components/images/movie3.jpg";
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import "./style/dark.scss";
+import { useContext } from "react";
+import { DarkModeContext } from "./context/darkModeContext";
+import { AuthContext } from "./context/AuthContext";
+import Register from "./pages/registration/Register";
+import TicketBooking from "./components/booking/Booking";
+import ProtectedRoutesChecker from "./components/Routes/ProtectedRoutesChecker";
+import EditProfile from "./pages/profile/EditProfile";
+import Checkout from "./pages/checkout/Checkout";
+import OrderSummary from "./pages/order-summary/OrderSummary";
+import ManageMovies from "./pages/manage-movies/ManageMovies";
 
 function App() {
-    const [currentlyRunning, setCurrentlyRunning] = useState([]);
-    const [comingSoon, setComingSoon] = useState([]);
-    useEffect(() => {
-        getMovies().then((movies) => {
-            const currentlyRunningMovies = [];
-            const comingSoonMovies = [];
-            for (const movieName in movies) {
-                const movie = movies[movieName];
-                const movieData = {
-                    poster: movie.thumbnail,
-                    title: movie.title,
-                    trailerUrl: movie.trailerUrl,
-                };
-                if (movie.running) {
-                    currentlyRunningMovies.push(movieData);
-                } else {
-                    comingSoonMovies.push(movieData);
-                }
-            }
-            setCurrentlyRunning(currentlyRunningMovies);
-            setComingSoon(comingSoonMovies);
-        });
-    }, []);
-    /*
-    const [currentlyRunning, setCurrentlyRunning] = useState([
-        {
-            poster: movie1image,
-            title: "Movie Title 1",
-            trailerUrl: "https://www.youtube.com/embed/xyz123",
-        },
-        {
-            poster: movie2Image,
-            title: "Movie Title 2",
-            trailerUrl: "https://www.youtube.com/embed/abc456",
-        },
-    ]);
+  const { darkMode } = useContext(DarkModeContext);
 
-    const [comingSoon, setComingSoon] = useState([
-        {
-            poster: movie3Image,
-            title: "Movie Title 3",
-            trailerUrl: "https://www.youtube.com/embed/uvw789",
-        },
-    ]);
-    */
+  const { currentUser } = useContext(AuthContext);
+  console.log("currentUser", currentUser);
 
-    return (
-        /**
-         * Router goes in here
-         */
-
-        <Router>
-            <Routes>
-                <Route
-                    exact
-                    path="/"
-                    element={
-                        <Homepage
-                            currentlyRunning={currentlyRunning}
-                            comingSoon={comingSoon}
-                        />
-                    }
-                />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
-                <Route
-                    path="/adminpanel"
-                    element={
-                        <AdminPanel
-                            currentlyRunning={currentlyRunning}
-                            setCurrentlyRunning={setCurrentlyRunning}
-                            comingSoon={comingSoon}
-                            setComingSoon={setComingSoon}
-                        />
-                    }
-                />
-                <Route path="/book/:movieTitle" element={<Booking />} />
-                <Route path="/checkout" element={<Checkout />} />
-                <Route path="/edit" element={<EditProfile />} />
-            </Routes>
-        </Router>
+  const RequireAuth = ({ children }) => {
+    return currentUser ? children : <Navigate to="/login" />;
+  };
+  const RequireAdminAuth = ({ children }) => {
+    console.log(currentUser);
+    return currentUser && currentUser.isAdmin ? (
+      children
+    ) : (
+      <Navigate to="/login" />
     );
+  };
+
+  return (
+    <div className={darkMode ? "app dark" : "app"}>
+      <BrowserRouter>
+        <ProtectedRoutesChecker />
+        <Routes>
+          <Route path="/">
+            <Route path="login" element={<Login />} />
+            <Route
+              index
+              element={
+                <RequireAuth>
+                  <Home />
+                </RequireAuth>
+              }
+            />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/edit-profile"
+              element={
+                <RequireAuth>
+                  <EditProfile />
+                </RequireAuth>
+              }
+            />
+
+            <Route
+              path="/book/:movieTitle"
+              element={
+                <RequireAuth>
+                  <TicketBooking />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/checkout"
+              element={
+                <RequireAuth>
+                  <Checkout />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/order-details"
+              element={
+                <RequireAuth>
+                  <OrderSummary />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/manage-movies"
+              element={
+                <RequireAdminAuth>
+                  <ManageMovies />
+                </RequireAdminAuth>
+              }
+            />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
 
 export default App;
