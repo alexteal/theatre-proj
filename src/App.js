@@ -34,7 +34,7 @@ function App() {
                 <ProtectedRoutesChecker />
                 <Routes>
                     <Route path="/">
-                        <Route path="login" element={<Login />} />
+                        <Route path="/login" element={<Login />} />
                         <Route index element={<Home />} />{" "}
                         {/* No authentication required for Home */}
                         <Route path="/register" element={<Register />} />
