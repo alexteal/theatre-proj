@@ -2,6 +2,9 @@ const sgMail = require("@sendgrid/mail");
 
 exports.sendEmail = (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET, POST");
+  res.set("Access-Control-Allow-Headers", "*");
+  res.set("Access-Control-Max-Age", "3600");
 
   if (req.method === "OPTIONS") {
     // Send response to OPTIONS requests
