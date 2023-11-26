@@ -16,6 +16,14 @@ const ManageMovies = () => {
   const [title, setTitle] = useState("");
   const [trailerUrl, setTrailerUrl] = useState("");
   const [thumbnail, setThumbnail] = useState("");
+  const [category, setCategory] = useState("");
+  const [cast, setCast] = useState("");
+  const [director, setDirector] = useState("");
+  const [producer, setProducer] = useState("");
+  const [synopsis, setSynopsis] = useState("");
+  const [reviews, setReviews] = useState(""); 
+  const [rating, setRating] = useState(""); 
+  const [showtime, setShowtime] = useState(""); 
   const [running, setRunning] = useState(false);
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState("");
@@ -37,6 +45,15 @@ const ManageMovies = () => {
               poster: movie.thumbnail,
               title: movie.title,
               trailerUrl: movie.trailerUrl,
+              category: movie.category,       
+              cast: movie.cast,              
+              director: movie.director,       
+              producer: movie.producer,       
+              synopsis: movie.synopsis,      
+              reviews: movie.reviews,         
+              running: movie.running,          
+              rating: movie.rating,
+              showtime: movie.showtime,
             };
             if (movie.running) {
               currentlyRunningMovies.push(movieData);
@@ -54,18 +71,47 @@ const ManageMovies = () => {
       });
   }, [status]);
 
-  console.log(currentlyRunningMovies);
-  console.log(comingSoonMovies);
+  //console.log(currentlyRunningMovies);
+  //console.log(comingSoonMovies);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    writeMovieData(title, trailerUrl, thumbnail, running)
+
+    // We have these two as arrays because we may have multiple reviews and or cast.
+    const castArray = cast.split(',').map(item => item.trim());
+    const reviewsArray = reviews.split('\n').map(item => item.trim());
+    const showtimeArray = showtime.split(',').map(item => item.trim());
+    // This isn't required below but we have it so we can organize our data!!!
+    const newMovieData = {
+      title,
+      trailerUrl,
+      thumbnail,
+      category,
+      cast: castArray,
+      director,
+      producer,
+      synopsis,
+      reviews: reviewsArray,
+      rating,
+      running,
+      showtime: showtimeArray,
+    };
+
+    writeMovieData(newMovieData)
       .then(() => {
         alert("Movie successfully added!");
         setStatus("Movie successfully added!");
         setTitle("");
         setTrailerUrl("");
         setThumbnail("");
+        setCategory("");
+        setCast("");
+        setDirector("");
+        setProducer("");
+        setSynopsis("");
+        setReviews("");
+        setRating("");
+        setShowtime("");
         setRunning(false);
       })
       .catch((error) => {
@@ -82,18 +128,58 @@ const ManageMovies = () => {
     setRunning(Boolean(movie.running)); // Explicitly cast to boolean
     setCurrentMovie(movie);
     setEditing(true);
+    setCategory(movie.category);
+    setCast(Array.isArray(movie.cast) ? movie.cast.join(', ') : '');
+    setDirector(movie.director);
+    setProducer(movie.producer);
+    setSynopsis(movie.synopsis);
+    setRating(movie.rating);
+    setShowtime(movie.showtime);
+    setReviews(Array.isArray(movie.reviews) ? movie.reviews.join(', ') : '');
   };
 
   const handleUpdate = (e) => {
     e.preventDefault();
     if (currentMovie) {
-      updateMovieData(selectedMovieId, title, trailerUrl, thumbnail, running)
+      const castArray = cast.split(',').map(item => item.trim());
+      const reviewsArray = reviews.split(',').map(item => item.trim());
+      const showtimeArray = showtime.split(',').map(item => item.trim());
+
+      const updatedMovieData = {
+        title,
+        trailerUrl,
+        thumbnail,
+        category,
+        cast: castArray,
+        director,
+        producer,
+        synopsis,
+        reviews: reviewsArray,
+        rating,
+        running,
+        showtime: showtimeArray,
+      };
+
+
+      updateMovieData(selectedMovieId, updatedMovieData)
         .then(() => {
+          console.log(category)
           alert("Movie successfully updated!");
           setStatus("Movie updated!");
           setTitle("");
           setTrailerUrl("");
           setThumbnail("");
+          setTitle("");
+          setTrailerUrl("");
+          setThumbnail("");
+          setCategory("");
+          setCast("");
+          setDirector("");
+          setProducer("");
+          setSynopsis("");
+          setReviews("");
+          setRating("");
+          setShowtime("");
           setRunning(false);
           setEditing(false);
         })
@@ -159,6 +245,103 @@ const ManageMovies = () => {
                   />
                 </label>
               </div>
+              <div className="input-group">
+                <label>
+                  Category
+                  <input
+                    type="text"
+                    placeholder="Category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Casts
+                  <input
+                    type="text"
+                    placeholder="Cast names separated by commas"
+                    value={cast}
+                    onChange={(e) => setCast(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Director
+                  <input
+                    type="text"
+                    placeholder="Director"
+                    value={director}
+                    onChange={(e) => setDirector(e.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Producer
+                  <input
+                    type="text"
+                    placeholder="Producer"
+                    value={producer}
+                    onChange={(e) => setProducer(e.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Synopsis
+                  <input
+                    type="text"
+                    placeholder="Synopsis"
+                    value={synopsis}
+                    onChange={(e) => setSynopsis(e.target.value)}
+                  />
+                </label>
+              </div>
+              <div className="input-group">
+                <label>
+                  Reviews
+                  <input
+                    type="text"
+                    placeholder="Separate reviews with commas"
+                    value={reviews}
+                    onChange={(e) => setReviews(e.target.value)}
+                  />
+                </label>
+              </div>
+              <div className="input-group">
+                <label>
+                  Rating
+                  <input
+                    type="text"
+                    placeholder="M-Rating"
+                    value={rating}
+                    onChange={(e) => setRating(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              <div className="input-group">
+                <label>
+                  Showtime
+                  <input
+                    type="text"
+                    placeholder="Separate showtimes with commas"
+                    value={showtime}
+                    onChange={(e) => setShowtime(e.target.value)}
+                  />
+                </label>
+              </div>
+
               <div className="">
                 <label className="mm-checkbox-container">
                   <input
