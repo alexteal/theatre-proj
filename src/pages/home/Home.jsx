@@ -5,10 +5,16 @@ import "./home.scss";
 import { useMovieContext } from "../../context/MovieContext";
 import { getMovies } from "../../dataService";
 import MovieList from "../../components/movie-list/MovieList";
+import SearchBar from "../../components/SearchBar/SearchBar";
+import { useMemo } from 'react';
 
 const Home = () => {
   const { state, dispatch } = useMovieContext();
   console.log("state", state);
+
+  const allMovies = [...state.runningMovies, ...state.comingSoonMovies];
+
+ 
 
   useEffect(() => {
     console.log("inside useEffect");
@@ -24,6 +30,16 @@ const Home = () => {
               poster: movie.thumbnail,
               title: movie.title,
               trailerUrl: movie.trailerUrl,
+              category: movie.category,       // Include new property
+              cast: movie.cast,               // Assuming 'cast' is already an array
+              director: movie.director,       // Include new property
+              producer: movie.producer,       // Include new property
+              synopsis: movie.synopsis,       // Include new property
+              reviews: movie.reviews,         // Assuming 'reviews' is already an array
+              running: movie.running,
+              rating: movie.rating,
+              showtime: movie.showtime,
+
             };
             if (movie.running) {
               currentlyRunningMovies.push(movieData);
@@ -51,6 +67,7 @@ const Home = () => {
       <Sidebar />
       <div className="homeContainer">
         <Navbar />
+        <SearchBar movies={allMovies} />
         <div className="movie-section">
           <div className="movie-posters">
             <h1 className="currently-running show-status">Currently Running</h1>
