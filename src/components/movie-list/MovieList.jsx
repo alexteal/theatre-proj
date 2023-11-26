@@ -45,6 +45,7 @@ function MovieList({ movies, editable, startEditing, handleDelete }) {
         </div>
       ))}
       {showTrailer && (
+        
         <div className="trailer-popup">
           <iframe
             width="560"
@@ -53,6 +54,18 @@ function MovieList({ movies, editable, startEditing, handleDelete }) {
             frameBorder="0"
             allowFullScreen
           ></iframe>
+          <div className="movie-details">
+            <h2>{currentMovie?.title}</h2>
+            <p><strong>Category:</strong> {currentMovie?.category}</p>
+            <p><strong>Director:</strong> {currentMovie?.director}</p>
+            <p><strong>Producer:</strong> {currentMovie?.producer}</p>
+            <p><strong>Synopsis:</strong> {currentMovie?.synopsis}</p>
+            <p><strong>Rating:</strong> {currentMovie?.rating}</p>
+            <p><strong>ShowTime:</strong> {currentMovie?.showtime?.join('\n ')}</p>
+            <p><strong>Reviews:</strong> {currentMovie?.reviews?.join('\n ')}</p>
+            <p><strong>Cast:</strong> {currentMovie?.cast?.join(', ')}</p>
+          </div>
+          
           <div className="trailer-buttons">
             <button
               className="close-trailer"
