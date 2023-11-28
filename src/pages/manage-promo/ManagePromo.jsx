@@ -6,14 +6,13 @@ import Navbar from "../../components/navbar/Navbar";
 const ManagePromo = () => {
   const [subject, setSubject] = useState("");
   const [text, setText] = useState("");
-
-  const to = "alex.teal@uga.edu"; // Hardcoded 'to' email address
+  const [to, setTo] = useState("");
   const from = "totallyrealmovies@gmail.com"; // Hardcoded 'from' email address
 
   const sendEmail = async (to, from, subject, text, html) => {
     // Prepare the body of the POST request
     const body = JSON.stringify({ to, from, subject, text, html });
-    const url = "https://us-central1-theatre-proj.cloudfunctions.net/sendEmail";
+    const url = "https://functions-sendemail-4pcopkyfsa-uc.a.run.app";
 
     // Make the POST request
     const response = await fetch(url, {
@@ -23,6 +22,8 @@ const ManagePromo = () => {
       },
       body: body,
     });
+    console.log("request body:");
+    console.log(body);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,7 +35,8 @@ const ManagePromo = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await sendEmail(to, from, subject, text, "");
+      const html = "<strong>" + text + "</strong>";
+      const response = await sendEmail(to, from, subject, text, html);
       console.log(response); // Log the response from the server
       alert("Email successfully sent!");
     } catch (error) {
@@ -53,6 +55,18 @@ const ManagePromo = () => {
           <div className="movie-form">
             <h2>Send Promo Email</h2>
             <form onSubmit={handleSubmit}>
+              <div className="input-group">
+                <label>
+                  To
+                  <input
+                    type="text"
+                    placeholder="jane.doe@gmail.com"
+                    value={to}
+                    onChange={(e) => setTo(e.target.value)}
+                    required
+                  />
+                </label>
+              </div>
               <div className="input-group">
                 <label>
                   Subject

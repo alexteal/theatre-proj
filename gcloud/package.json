@@ -1,10 +1,6 @@
 {
-  "name": "sendgrid-function",
-  "version": "1.0.0",
-  "description": "Google Cloud Function to send email using SendGrid",
-  "main": "index.js",
   "dependencies": {
-    "@sendgrid/mail": "7.7.0",
-    "firebase-functions": "^4.5.0"
+    "@google-cloud/functions-framework": "^3.0.0",
+    "@sendgrid/mail": "^7.7.0"
   }
 }
