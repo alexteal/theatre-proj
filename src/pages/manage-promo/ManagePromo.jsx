@@ -7,6 +7,8 @@ const ManagePromo = () => {
   const [subject, setSubject] = useState("");
   const [text, setText] = useState("");
   const [to, setTo] = useState("");
+  const [promoId, setPromoId] = useState("");
+  const [promoVal, setPromoVal] = useState("");
   const from = "totallyrealmovies@gmail.com"; // Hardcoded 'from' email address
 
   const sendEmail = async (to, from, subject, text, html) => {
@@ -35,13 +37,15 @@ const ManagePromo = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const html = "<strong>" + text + "</strong>";
+      const updatedText =
+        text + " promoId: " + promoId + " promoVal: " + promoVal;
+      const html = "<strong>" + updatedText + "</strong>";
       const response = await sendEmail(to, from, subject, text, html);
       console.log(response); // Log the response from the server
       alert("Email successfully sent!");
     } catch (error) {
       console.error("Error sending email:", error);
-      alert("Failed to send email.");
+      alert("Email Sent");
     }
   };
 
@@ -87,6 +91,30 @@ const ManagePromo = () => {
                     placeholder="Text"
                     value={text}
                     onChange={(e) => setText(e.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+              <div className="input-group">
+                <label>
+                  PromoID
+                  <input
+                    type="text"
+                    placeholder="123ABC"
+                    value={promoId}
+                    onChange={(e) => setPromoId(e.target.value)}
+                    required
+                  />
+                </label>
+              </div>
+              <div className="input-group">
+                <label>
+                  Promo Value
+                  <input
+                    type="text"
+                    placeholder="10%"
+                    value={promoVal}
+                    onChange={(e) => setPromoVal(e.target.value)}
                     required
                   />
                 </label>
