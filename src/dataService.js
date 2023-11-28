@@ -134,3 +134,49 @@ export function getMovies() {
     );
   });
 }
+
+export function setPromoData(promoId, promoVal, userEmail) {
+  return new Promise((resolve, reject) => {
+    try {
+      const db = getDatabase();
+      const reference = ref(db, "promos/" + promoId);
+      set(reference, { promoVal: promoVal, userEmail: userEmail })
+        .then(() => resolve())
+        .catch((error) => reject(error));
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+export function updatePromoData(promoId, promoVal, userEmail) {
+  return new Promise((resolve, reject) => {
+    try {
+      const db = getDatabase();
+      const reference = ref(db, "promos/" + promoId);
+      update(reference, { promoVal: promoVal, userEmail: userEmail })
+        .then(() => resolve())
+        .catch((error) => reject(error));
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+export function getPromoData(promoId) {
+  return new Promise((resolve, reject) => {
+    try {
+      const db = getDatabase();
+      const reference = ref(db, "promos/" + promoId);
+      get(reference)
+        .then((snapshot) => {
+          if (snapshot.exists()) {
+            resolve(snapshot.val());
+          } else {
+            resolve(null);
+          }
+        })
+        .catch((error) => reject(error));
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
