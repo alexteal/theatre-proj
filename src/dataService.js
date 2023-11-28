@@ -75,17 +75,12 @@ export const updateUserData = (userId, data) => {
   return set(userRef, data);
 };
 
-export function writeMovieData(title, trailerUrl, thumbnail, runningStatus) {
+export function writeMovieData(movieData) {
   return new Promise((resolve, reject) => {
     try {
       const db = getDatabase(app);
       const newMovieRef = push(ref(db, "movies"));
-      set(newMovieRef, {
-        title: title,
-        trailerUrl: trailerUrl,
-        thumbnail: thumbnail,
-        running: runningStatus,
-      })
+      set(newMovieRef, movieData)
         .then(() => resolve())
         .catch((error) => reject(error));
     } catch (error) {
@@ -94,23 +89,12 @@ export function writeMovieData(title, trailerUrl, thumbnail, runningStatus) {
   });
 }
 
-export function updateMovieData(
-  movieId,
-  title,
-  trailerUrl,
-  thumbnail,
-  runningStatus
-) {
+export function updateMovieData(movieId, movieData) {
   return new Promise((resolve, reject) => {
     try {
       const db = getDatabase(app);
       const reference = ref(db, "movies/" + movieId);
-      set(reference, {
-        title: title,
-        trailerUrl: trailerUrl,
-        thumbnail: thumbnail,
-        running: runningStatus,
-      })
+      set(reference, movieData)
         .then(() => resolve())
         .catch((error) => reject(error));
     } catch (error) {
