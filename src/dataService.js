@@ -58,7 +58,7 @@ export const fetchUserData = async (userId) => {
   console.log(snapshot.val(), "check");
   if (snapshot.exists()) {
     const userData = snapshot.val();
-    if (userData && userData?.paymentCard && userData?.paymentCard != "") {
+    if (userData && userData?.paymentCard && userData?.paymentCard !== "") {
       userData.paymentCard = decryptData(userData.paymentCard);
     }
     return userData;
@@ -174,6 +174,19 @@ export function getPromoData(promoId) {
             resolve(null);
           }
         })
+        .catch((error) => reject(error));
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+export function deletePromoData(promoId) {
+  return new Promise((resolve, reject) => {
+    try {
+      const db = getDatabase();
+      const reference = ref(db, "promos/" + promoId);
+      remove(reference)
+        .then(() => resolve())
         .catch((error) => reject(error));
     } catch (error) {
       reject(error);

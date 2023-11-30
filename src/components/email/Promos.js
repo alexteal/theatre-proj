@@ -1,5 +1,11 @@
-import { getPromoData, deletePromoData } from "../../dataservice";
-import { fetchUserData } from "../../dataservice";
+import {
+  getPromoData,
+  deletePromoData,
+  fetchUserData,
+  setPromoData,
+} from "../../dataService.js";
+import { v4 as uuidv4 } from "uuid";
+
 export async function checkPromo(userId, promoId) {
   try {
     const promoData = await getPromoData(promoId);
@@ -20,6 +26,20 @@ export async function redeemPromo(userId, promoId) {
     if (isPromoValid) {
       await deletePromoData(promoId);
       return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+export async function createPromo(userData, promoVal) {
+  try {
+    if (userData.registerForPromotion) {
+      const promoId = uuidv4();
+      await setPromoData(promoId, promoVal, userData.email);
+      return promoId;
     } else {
       return false;
     }

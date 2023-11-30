@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./managepromo.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
+import { createPromo } from "../../components/email/Promos";
 
 const ManagePromo = () => {
   const [subject, setSubject] = useState("");
@@ -45,7 +46,11 @@ const ManagePromo = () => {
       alert("Email successfully sent!");
     } catch (error) {
       console.error("Error sending email:", error);
-      alert("Email Sent");
+      if (error === "Email sent successfully") {
+        alert("Email Sent");
+      } else {
+        alert("Email failed");
+      }
     }
   };
 
