@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import "./managepromo.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
+import { AuthContext } from "../../context/AuthContext";
 import { createPromo } from "../../components/email/Promos";
+import { useContext } from "react";
 
 const ManagePromo = () => {
+  const { currentUser } = useContext(AuthContext);
   const [subject, setSubject] = useState("");
   const [text, setText] = useState("");
   const [to, setTo] = useState("");
@@ -44,13 +47,19 @@ const ManagePromo = () => {
       const response = await sendEmail(to, from, subject, text, html);
       console.log(response); // Log the response from the server
       alert("Email successfully sent!");
+      if (response.code === 200) {
+        const userId = currentUser?.uid;
+        const response = createPromo(userId, promoId, promoVal);
+        console.log(response);
+        if (response === false) {
+          alert("Promo Creation Failed");
+        } else {
+          alert("Promo Created");
+        }
+      }
     } catch (error) {
       console.error("Error sending email:", error);
-      if (error === "Email sent successfully") {
-        alert("Email Sent");
-      } else {
-        alert("Email failed");
-      }
+      alert("Email failed");
     }
   };
 

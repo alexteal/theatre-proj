@@ -6,6 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { fetchUserData, saveBookingData } from "../../dataService";
+import { checkPromo } from "../../components/email/Promos";
 
 function Checkout() {
   const { bookingDetails } = useContext(BookingContext);
@@ -18,12 +19,15 @@ function Checkout() {
     firstName: "",
     lastName: "",
     paymentCard: "",
+    registerForPromotion: "",
   });
 
   const { selectedShowtime, selectedSeats, ages, totalPrice } = bookingDetails;
   // console.log("bookingDetails", bookingDetails);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [promoId, setPromoId] = useState("");
+  const [discount, setDiscount] = useState("");
   const { setBookingDetails } = useContext(BookingContext);
   const navigate = useNavigate();
 
@@ -39,6 +43,15 @@ function Checkout() {
       .catch((err) => setError("Error fetching user data."));
   }, [userId]);
 
+  const handlePromoIdChange = (e) => {
+    const promoId = e.target.value;
+    setPromoId(promoId);
+    const response = checkPromo(userId, promoId);
+    if (response !== false) {
+      setDiscount(response.promoVal);
+    }
+  };
+
   const handleCardNumberChange = (e) => {
     const val = e.target.value.substring(0, 16);
     setUserData({
@@ -49,7 +62,6 @@ function Checkout() {
 
   const handlePurchase = (e) => {
     e.preventDefault();
-
     // Form validation
     const form = e.currentTarget;
     if (form.checkValidity() === false) {
@@ -57,22 +69,28 @@ function Checkout() {
       alert("Please fill in all required fields before submitting.");
       return;
     }
-
+    // Calculate total price with discount
+    const finalPrice = totalPrice - totalPrice / discount;
     // Save merged booking and user details in Firebase
-    saveBookingData(userId, bookingDetails, userData)
+    saveBookingData(
+      userId,
+      { ...bookingDetails, totalPrice: finalPrice },
+      userData
+    )
       .then(() => {
         console.log("Booking and user details saved successfully!");
       })
       .catch((error) => {
         console.error("Error saving details:", error);
       });
-
     // Storing user details in BookingContext
-    setBookingDetails((prev) => ({ ...prev, userData }));
-
+    setBookingDetails((prev) => ({
+      ...prev,
+      userData,
+      totalPrice: finalPrice,
+    }));
     navigate("/order-details");
   };
-
   return (
     <div className="home">
       <Sidebar />
@@ -168,7 +186,22 @@ function Checkout() {
                       required
                     />
                   </label>
-                </div>{" "}
+                </div>
+                {userData.registerForPromotion && (
+                  <div className="input-group">
+                    <label>
+                      Redeem Promotion:
+                      <input
+                        type="text"
+                        className="checkout-input"
+                        value={promoId}
+                        onChange={handlePromoIdChange}
+                        placeholder="Promo ID"
+                      />
+                    </label>
+                  </div>
+                )}
+
                 <div className="input-group">
                   <label>
                     Billing Address:
