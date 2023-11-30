@@ -43,13 +43,13 @@ function Checkout() {
       .catch((err) => setError("Error fetching user data."));
   }, [userId]);
 
-  const handlePromoIdChange = (e) => {
+  const handlePromoIdChange = async (e) => {
     const promoId = e.target.value;
     setPromoId(promoId);
-    const response = checkPromo(userId, promoId);
-    if (response !== false) {
-      setDiscount(response.promoVal);
-    }
+    const response = await checkPromo(userId, promoId);
+    console.log("response = ", response);
+    setDiscount(response);
+    console.log(discount);
   };
 
   const handleCardNumberChange = (e) => {
