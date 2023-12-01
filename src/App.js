@@ -48,7 +48,7 @@ function App() {
                             }
                         />
                         <Route
-                            path="/book/:movieTitle"
+                            path="/book/:movieId"
                             element={
                                 <RequireAuth>
                                     <TicketBooking />

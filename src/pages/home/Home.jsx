@@ -20,42 +20,46 @@ const Home = () => {
     console.log("inside useEffect");
     getMovies()
       .then((data) => {
-        console.log("Fetched movies:", data);
         const currentlyRunningMovies = [];
-        const comingSoonMovies = [];
-        for (const movieName in data) {
-          const movie = data[movieName];
-          if (movieName && movie.title) {
-            const movieData = {
-              poster: movie.thumbnail,
-              title: movie.title,
-              trailerUrl: movie.trailerUrl,
-              category: movie.category,       // Include new property
-              cast: movie.cast,               // Assuming 'cast' is already an array
-              director: movie.director,       // Include new property
-              producer: movie.producer,       // Include new property
-              synopsis: movie.synopsis,       // Include new property
-              reviews: movie.reviews,         // Assuming 'reviews' is already an array
-              running: movie.running,
-              rating: movie.rating,
-              showtime: movie.showtime,
+          const comingSoonMovies = [];
+        
+        
+          for (const movieName in data) {
+            const movie = data[movieName];
+            if (movieName && movie.title) {
+              const movieData = {
+                poster: movie.thumbnail,
+                title: movie.title,
+                trailerUrl: movie.trailerUrl,
+                category: movie.category,       // Include new property
+                cast: movie.cast,               // Assuming 'cast' is already an array
+                director: movie.director,       // Include new property
+                producer: movie.producer,       // Include new property
+                synopsis: movie.synopsis,       // Include new property
+                reviews: movie.reviews,         // Assuming 'reviews' is already an array
+                running: movie.running,
+                rating: movie.rating,
+                showtime: movie.showtime,
+                id: movie.id,
 
-            };
-            if (movie.running) {
-              currentlyRunningMovies.push(movieData);
-            } else {
-              comingSoonMovies.push(movieData);
+              };
+              if (movie.running) {
+                currentlyRunningMovies.push(movieData);
+              } else {
+                comingSoonMovies.push(movieData);
+              }
             }
           }
-        }
-        dispatch({
-          type: "SET_RUNNING_MOVIES",
-          payload: currentlyRunningMovies,
-        });
-        dispatch({
-          type: "SET_COMING_SOON_MOVIES",
-          payload: comingSoonMovies,
-        });
+        
+          dispatch({
+            type: "SET_RUNNING_MOVIES",
+            payload: currentlyRunningMovies,
+          });
+          dispatch({
+            type: "SET_COMING_SOON_MOVIES",
+            payload: comingSoonMovies,
+          });
+        
       })
       .catch((error) => {
         console.error("Error fetching movies:", error);

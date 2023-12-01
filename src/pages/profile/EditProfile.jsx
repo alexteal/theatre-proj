@@ -13,6 +13,7 @@ const EditProfile = () => {
   const { currentUser } = useContext(AuthContext);
   const [checked, setChecked] = useState(false);
   const userId = currentUser?.uid;
+  const [bookingHistory, setBookingHistory] = useState([]);
 
   useEffect(() => {
     console.log(userId);
@@ -24,6 +25,27 @@ const EditProfile = () => {
         }
       })
       .catch((err) => setError("Error fetching user data."));
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserData(userId)
+        .then((data) => {
+          setUserData(data);
+          setLoading(false);
+        })
+        .catch((err) => setError("Error fetching user data."));
+  
+      // Fetch the booking history
+      fetchBookingHistory(userId)
+        .then((history) => {
+          setBookingHistory(history); // Set the booking history in state
+        })
+        .catch((error) => {
+          console.error("Error fetching booking history:", error);
+          setError("Error fetching booking history.");
+        });
+    }
   }, [userId]);
 
   const handleCardNumberChange = (e) => {

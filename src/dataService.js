@@ -45,6 +45,23 @@ export const saveUserData = (userId, data) => {
   return set(userRef, data);
 };
 
+
+
+export function getShowtimes(movieId) {
+  return new Promise((resolve, reject) => {
+    const db = getDatabase(app);
+    const showtimesRef = ref(db, `movies/${movieId}/showtimes`);
+    onValue(showtimesRef, (snapshot) => {
+      const data = snapshot.val();
+      resolve(data ? data : []); // Return an empty array if data is null or undefined
+    }, (error) => {
+      reject(error);
+    });
+  });
+}
+
+
+
 // export const fetchUserData = (userId) => {
 //     const database = getDatabase(app);
 //     const userRef = ref(database, 'user/' + userId);
@@ -120,20 +137,43 @@ export function deleteMovieData(movieId) {
 export function getMovies() {
   return new Promise((resolve, reject) => {
     const db = getDatabase(app);
-    const reference = ref(db, "movies");
-    onValue(
-      reference,
-      (snapshot) => {
-        const data = snapshot.val();
-        console.log(data);
-        resolve(data ? data : {}); // if data is null or undefined, return an empty object
-      },
-      (error) => {
-        reject(error);
-      }
-    );
+    const moviesRef = ref(db, "movies");
+    onValue(moviesRef, (snapshot) => {
+      const movies = [];
+      snapshot.forEach((childSnapshot) => {
+        movies.push({
+          id: childSnapshot.key, // Include the Firebase unique key as 'id'
+          ...childSnapshot.val()
+        });
+      });
+      resolve(movies);
+    }, (error) => {
+      reject(error);
+    });
   });
 }
+
+export const fetchBookingHistory = (userId) => {
+  return new Promise((resolve, reject) => {
+    const db = getDatabase(app);
+    const bookingRef = ref(db, 'booking');
+    onValue(bookingRef, (snapshot) => {
+      const history = [];
+      snapshot.forEach((childSnapshot) => {
+        const booking = childSnapshot.val();
+        if (booking?.userData?.email === userId) {
+          history.push({
+            ...booking,
+            bookingId: childSnapshot.key,
+          });
+        }
+      });
+      resolve(history);
+    }, {
+      onlyOnce: true
+    });
+  });
+};
 
 export function setPromoData(promoId, promoVal, userEmail) {
   return new Promise((resolve, reject) => {
@@ -193,3 +233,5 @@ export function deletePromoData(promoId) {
     }
   });
 }
+
+

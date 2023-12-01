@@ -1,18 +1,37 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import SeatSelection from "./SeatSelection";
 import { useNavigate } from "react-router-dom";
+import { useParams } from 'react-router-dom';
 import "./booking.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { BookingContext } from "../../context/BookingContext";
+import { getShowtimes } from "../../dataService";
 
-function TicketBooking() {
+function TicketBooking(MovieId) {
+  const { movieId } = useParams();
+  console.log("CHECK THIS OUTTTT ", movieId);
+  const [fetchedShowtimes, setFetchedShowtimes] = useState([]);
   const [selectedShowtime, setSelectedShowtime] = useState("");
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [ages, setAges] = useState([]); // Initialize ages state
   const { setBookingDetails } = useContext(BookingContext);
 
-  const showtimes = ["12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"];
+  useEffect(() => {
+    getShowtimes(movieId).then((showtimes) => {
+      console.log("Fetched showtimes:", showtimes); // Log to verify the fetched data
+      setFetchedShowtimes(showtimes);
+    }).catch((error) => {
+      console.error("Error fetching showtimes: ", error);
+    });
+  }, []);
+
+  const handleShowtimeChange = (e) => {
+    setSelectedShowtime(e.target.value);
+  };
+  
+
+  //const showtimes = ["12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"];
   const seatPrices = {
     Adult: 9.79,
     Child: 7.69,
@@ -82,19 +101,16 @@ function TicketBooking() {
         <div className="book-tickets-container">
           <h2>Book Tickets</h2>
           <div className="showtime-container">
-            {/* Showtime selection */}
             <h3>Select Showtime</h3>
-            <select onChange={(e) => setSelectedShowtime(e.target.value)}>
-              <option value="" disabled selected>
-                Select showtime
-              </option>
-              {showtimes.map((time, index) => (
-                <option key={index} value={time}>
-                  {time}
-                </option>
+            <select value={selectedShowtime} onChange={handleShowtimeChange}>
+              <option value="" disabled>Select showtime</option>
+              {fetchedShowtimes.map((time, index) => (
+                <option key={index} value={time}>{time}</option>
               ))}
             </select>
           </div>
+
+
 
           {/* Seat selection */}
           {selectedShowtime && (

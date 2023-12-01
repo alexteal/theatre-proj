@@ -7,6 +7,8 @@ function MovieList({ movies, editable, startEditing, handleDelete }) {
   const [currentTrailerUrl, setCurrentTrailerUrl] = useState("");
   const [currentMovie, setCurrentMovie] = useState(null); // New state variable
 
+  console.log("THIS IS ITTTTTTTTTT ", movies);
+
   const openTrailer = (movie) => {
     // Accepts movie object as a parameter now
     setCurrentTrailerUrl(movie.trailerUrl);
@@ -18,7 +20,8 @@ function MovieList({ movies, editable, startEditing, handleDelete }) {
 
   const bookTickets = () => {
     if (currentMovie) {
-      navigate(`/book/${currentMovie.title}`);
+      console.log("This is it ", currentMovie.id);
+      navigate(`/book/${currentMovie.id}`);
     }
   };
 

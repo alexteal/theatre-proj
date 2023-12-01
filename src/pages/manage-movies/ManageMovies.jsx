@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
+import ShowtimePicker from "../../components/react-datepicker/ShowtimePicker";
 import {
   deleteMovieData,
   getMovies,
@@ -10,7 +11,10 @@ import {
 import "./manage-movies.scss";
 import MovieList from "../../components/movie-list/MovieList";
 
+
+
 const ManageMovies = () => {
+  const [showtimes, setShowtimes] = useState([]);
   const [currentlyRunningMovies, setCurrentlyRunningMovies] = useState([]);
   const [comingSoonMovies, setComingSoonMovies] = useState([]);
   const [title, setTitle] = useState("");
@@ -23,7 +27,6 @@ const ManageMovies = () => {
   const [synopsis, setSynopsis] = useState("");
   const [reviews, setReviews] = useState(""); 
   const [rating, setRating] = useState(""); 
-  const [showtime, setShowtime] = useState(""); 
   const [running, setRunning] = useState(false);
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState("");
@@ -53,7 +56,8 @@ const ManageMovies = () => {
               reviews: movie.reviews,         
               running: movie.running,          
               rating: movie.rating,
-              showtime: movie.showtime,
+              showtimes: movie.showtimes,
+              
             };
             if (movie.running) {
               currentlyRunningMovies.push(movieData);
@@ -71,6 +75,17 @@ const ManageMovies = () => {
       });
   }, [status]);
 
+
+  const parseShowtimeString = (showtimeString) => {
+    // Split the string by " || " to separate the date and time parts
+    const [dateStr, timeStr] = showtimeString.split(' || ');
+    // Parse the date part into a Date object
+    const date = new Date(dateStr);
+    // Return the Date object and the time string
+    return { date, time: timeStr };
+  };
+  
+
   //console.log(currentlyRunningMovies);
   //console.log(comingSoonMovies);
 
@@ -80,8 +95,11 @@ const ManageMovies = () => {
     // We have these two as arrays because we may have multiple reviews and or cast.
     const castArray = cast.split(',').map(item => item.trim());
     const reviewsArray = reviews.split('\n').map(item => item.trim());
-    const showtimeArray = showtime.split(',').map(item => item.trim());
+    //const showtimeArray = showtime.split(',').map(item => item.trim());
     // This isn't required below but we have it so we can organize our data!!!
+
+    //const organizedShowtimes = organizeShowtimes(showtimes);
+
     const newMovieData = {
       title,
       trailerUrl,
@@ -94,7 +112,8 @@ const ManageMovies = () => {
       reviews: reviewsArray,
       rating,
       running,
-      showtime: showtimeArray,
+      showtimes
+      //showtime: showtimeArray,
     };
 
     writeMovieData(newMovieData)
@@ -111,7 +130,7 @@ const ManageMovies = () => {
         setSynopsis("");
         setReviews("");
         setRating("");
-        setShowtime("");
+        setShowtimes("");
         setRunning(false);
       })
       .catch((error) => {
@@ -130,11 +149,17 @@ const ManageMovies = () => {
     setEditing(true);
     setCategory(movie.category);
     setCast(Array.isArray(movie.cast) ? movie.cast.join(', ') : '');
+
+    setShowtimes(movie.showtimes || []);
+
+    setShowtimes(movie.showtimes ? movie.showtimes.map(parseShowtimeString) : []);
+
+
     setDirector(movie.director);
     setProducer(movie.producer);
     setSynopsis(movie.synopsis);
     setRating(movie.rating);
-    setShowtime(movie.showtime);
+    setShowtimes(movie.showtimes);
     setReviews(Array.isArray(movie.reviews) ? movie.reviews.join(', ') : '');
   };
 
@@ -143,7 +168,7 @@ const ManageMovies = () => {
     if (currentMovie) {
       const castArray = cast.split(',').map(item => item.trim());
       const reviewsArray = reviews.split(',').map(item => item.trim());
-      const showtimeArray = showtime.split(',').map(item => item.trim());
+      //const showtimeArray = showtime.split(',').map(item => item.trim());
 
       const updatedMovieData = {
         title,
@@ -157,7 +182,8 @@ const ManageMovies = () => {
         reviews: reviewsArray,
         rating,
         running,
-        showtime: showtimeArray,
+        showtimes,
+        //showtime: showtimeArray,
       };
 
 
@@ -175,11 +201,13 @@ const ManageMovies = () => {
           setCategory("");
           setCast("");
           setDirector("");
+
+          
           setProducer("");
           setSynopsis("");
           setReviews("");
           setRating("");
-          setShowtime("");
+          setShowtimes("");
           setRunning(false);
           setEditing(false);
         })
@@ -330,7 +358,7 @@ const ManageMovies = () => {
                 </label>
               </div>
 
-              <div className="input-group">
+              {/* <div className="input-group">
                 <label>
                   Showtime
                   <input
@@ -340,7 +368,10 @@ const ManageMovies = () => {
                     onChange={(e) => setShowtime(e.target.value)}
                   />
                 </label>
-              </div>
+              </div> */}
+
+                <ShowtimePicker showtimes={showtimes || []} setShowtimes={setShowtimes} />
+
 
               <div className="">
                 <label className="mm-checkbox-container">
