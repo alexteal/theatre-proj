@@ -12,6 +12,7 @@ import EditProfile from "./pages/profile/EditProfile";
 import Checkout from "./pages/checkout/Checkout";
 import OrderSummary from "./pages/order-summary/OrderSummary";
 import ManageMovies from "./pages/manage-movies/ManageMovies";
+import ManagePromo from "./pages/manage-promo/ManagePromo";
 
 function App() {
     const { darkMode } = useContext(DarkModeContext);
@@ -75,6 +76,14 @@ function App() {
                             element={
                                 <RequireAdminAuth>
                                     <ManageMovies />
+                                </RequireAdminAuth>
+                            }
+                        />
+                        <Route
+                            path="/manage-promo"
+                            element={
+                                <RequireAdminAuth>
+                                    <ManagePromo />
                                 </RequireAdminAuth>
                             }
                         />
