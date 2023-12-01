@@ -28,6 +28,7 @@ function Checkout() {
   const [error, setError] = useState("");
   const [promoId, setPromoId] = useState("");
   const [discount, setDiscount] = useState("");
+  const [finalPrice, setFinalPrice] = useState(totalPrice);
   const { setBookingDetails } = useContext(BookingContext);
   const navigate = useNavigate();
 
@@ -50,6 +51,9 @@ function Checkout() {
     console.log("response = ", response);
     setDiscount(response);
     console.log(discount);
+    if (!isNaN(response)) {
+      setFinalPrice(totalPrice - totalPrice / discount);
+    }
   };
 
   const handleCardNumberChange = (e) => {
@@ -70,7 +74,6 @@ function Checkout() {
       return;
     }
     // Calculate total price with discount
-    const finalPrice = totalPrice - totalPrice / discount;
     // Save merged booking and user details in Firebase
     saveBookingData(
       userId,
@@ -118,7 +121,7 @@ function Checkout() {
               </p>
               <p className="booking-field-names">
                 Amount Payable:&nbsp;
-                <span className="booking-field-value">${totalPrice}</span>
+                <span className="booking-field-value">${finalPrice}</span>
               </p>
             </section>
             <section className="checkout-form">
