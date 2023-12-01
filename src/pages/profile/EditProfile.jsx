@@ -5,6 +5,7 @@ import { reauthenticateUser, updateUserPassword } from "../../firebase";
 import "./edit-profile.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
+import { fetchBookingHistory } from "../../dataService";
 
 const EditProfile = () => {
   const [userData, setUserData] = useState({});
@@ -16,18 +17,7 @@ const EditProfile = () => {
   const [bookingHistory, setBookingHistory] = useState([]);
 
   useEffect(() => {
-    console.log(userId);
-    fetchUserData(userId)
-      .then((data) => {
-        if (data) {
-          setUserData(data);
-          setLoading(false);
-        }
-      })
-      .catch((err) => setError("Error fetching user data."));
-  }, [userId]);
-
-  useEffect(() => {
+    console.log("HELLOOO ", userId)
     if (userId) {
       fetchUserData(userId)
         .then((data) => {
@@ -39,6 +29,7 @@ const EditProfile = () => {
       // Fetch the booking history
       fetchBookingHistory(userId)
         .then((history) => {
+          console.log(history, "HELLOO HI ")
           setBookingHistory(history); // Set the booking history in state
         })
         .catch((error) => {
@@ -92,6 +83,8 @@ const EditProfile = () => {
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);
   };
+
+  console.log("THSWDEASDAHUISADSADDSAAS", bookingHistory)
 
   return (
     <>
@@ -225,6 +218,23 @@ const EditProfile = () => {
             </form>
             {error && <div>{error}</div>}
           </div>
+
+
+          
+          
+          {bookingHistory.length > 0 ? (
+  bookingHistory.map((booking, index) => (
+    <div key={index}>
+      <p>Showtime: {booking.selectedShowtime}</p>
+      <p>Total Price: {booking.totalPrice}</p>
+      {/* Render other booking details as needed */}
+    </div>
+  ))
+) : (
+  <p>No booking history available.</p>
+)}
+
+
         </div>
       </div>
     </>

@@ -156,24 +156,29 @@ export function getMovies() {
 export const fetchBookingHistory = (userId) => {
   return new Promise((resolve, reject) => {
     const db = getDatabase(app);
-    const bookingRef = ref(db, 'booking');
-    onValue(bookingRef, (snapshot) => {
-      const history = [];
-      snapshot.forEach((childSnapshot) => {
-        const booking = childSnapshot.val();
-        if (booking?.userData?.email === userId) {
-          history.push({
-            ...booking,
-            bookingId: childSnapshot.key,
-          });
-        }
-      });
-      resolve(history);
+    const userBookingRef = ref(db, `booking/${userId}`);
+    onValue(userBookingRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const userBooking = snapshot.val();
+        // Assuming you want all the bookings under this userId
+        const history = Object.keys(userBooking).map((key) => {
+          return {
+            bookingId: key,
+            ...userBooking[key],
+          };
+        });
+        resolve(history);
+      } else {
+        resolve([]); // No bookings found for this userId
+      }
     }, {
       onlyOnce: true
+    }, (error) => {
+      reject(error);
     });
   });
 };
+
 
 export function setPromoData(promoId, promoVal, userEmail) {
   return new Promise((resolve, reject) => {
