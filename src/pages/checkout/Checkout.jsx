@@ -51,8 +51,11 @@ function Checkout() {
     console.log("response = ", response);
     setDiscount(response);
     console.log(discount);
-    if (!isNaN(response)) {
-      setFinalPrice(totalPrice - totalPrice / discount);
+    if (!isNaN(response) && response !== false) {
+      setFinalPrice(totalPrice - totalPrice / response);
+      console.log("setfinalprice run");
+    } else {
+      setFinalPrice(totalPrice);
     }
   };
 
