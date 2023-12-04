@@ -5,7 +5,7 @@ import { reauthenticateUser, updateUserPassword } from "../../firebase";
 import "./edit-profile.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import { fetchBookingHistory } from "../../dataService";
+import { fetchAllBookings } from "../../dataService";
 
 const EditProfile = () => {
   const [userData, setUserData] = useState({});
@@ -17,27 +17,37 @@ const EditProfile = () => {
   const [bookingHistory, setBookingHistory] = useState([]);
 
   useEffect(() => {
-    console.log("HELLOOO ", userId)
-    if (userId) {
-      fetchUserData(userId)
-        .then((data) => {
-          setUserData(data);
-          setLoading(false);
-        })
-        .catch((err) => setError("Error fetching user data."));
+    console.log("Fetching data for userID:", userId);
   
-      // Fetch the booking history
-      fetchBookingHistory(userId)
-        .then((history) => {
-          console.log(history, "HELLOO HI ")
-          setBookingHistory(history); // Set the booking history in state
-        })
-        .catch((error) => {
-          console.error("Error fetching booking history:", error);
-          setError("Error fetching booking history.");
-        });
-    }
-  }, [userId]);
+    // Fetch user data
+    fetchUserData(userId)
+      .then((data) => {
+        console.log("Fetched user data:", data);
+        setUserData(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching user data:", err);
+        setError("Error fetching user data.");
+        setLoading(false);
+      });
+  
+    // Fetch booking history
+    fetchAllBookings()
+      .then((allBookings) => {
+        console.log("All bookings fetched:", allBookings);
+        const userBookings = allBookings.filter(booking => 
+          booking.userData && booking.userData.email === userData.email
+        );
+        console.log("Filtered user bookings:", userBookings);
+        setBookingHistory(userBookings);
+      })
+      .catch((error) => {
+        console.error("Error fetching booking history:", error);
+        setError("Error fetching booking history.");
+      });
+  }, [userId, userData.email]);
+  
 
   const handleCardNumberChange = (e) => {
     const val = e.target.value.substring(0, 16);
@@ -84,7 +94,8 @@ const EditProfile = () => {
     setChecked(event.target.checked);
   };
 
-  console.log("THSWDEASDAHUISADSADDSAAS", bookingHistory)
+  console.log("THSWDEASDAHUISADSADDSAAS", bookingHistory.booking)
+  
 
   return (
     <>
@@ -219,21 +230,22 @@ const EditProfile = () => {
             {error && <div>{error}</div>}
           </div>
 
-
-          
-          
-          {bookingHistory.length > 0 ? (
-  bookingHistory.map((booking, index) => (
-    <div key={index}>
-      <p>Showtime: {booking.selectedShowtime}</p>
-      <p>Total Price: {booking.totalPrice}</p>
-      {/* Render other booking details as needed */}
-    </div>
-  ))
-) : (
-  <p>No booking history available.</p>
-)}
-
+          <div className="booking-history-container">
+            <h2>Purchase History</h2>
+            {bookingHistory.length > 0 ? (
+              bookingHistory.map((booking, index) => (
+                <div key={index} className="booking-entry">
+                  <p>Showtime: {booking.ages} </p>
+                  <p>Showtime: {booking.selectedSeats}</p>
+                  <p>Showtime: {booking.selectedShowtime}</p>
+                  <p>Total Price: {booking.totalPrice}</p>
+                  {/* Render other booking details as needed */}
+                </div>
+              ))
+              ) : (
+                <p>No purchase history found.</p>
+            )}
+          </div>
 
         </div>
       </div>

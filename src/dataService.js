@@ -153,27 +153,26 @@ export function getMovies() {
   });
 }
 
-export const fetchBookingHistory = (userId) => {
+export const fetchAllBookings = () => {
   return new Promise((resolve, reject) => {
     const db = getDatabase(app);
-    const userBookingRef = ref(db, `booking/${userId}`);
-    onValue(userBookingRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const userBooking = snapshot.val();
-        // Assuming you want all the bookings under this userId
-        const history = Object.keys(userBooking).map((key) => {
-          return {
-            bookingId: key,
-            ...userBooking[key],
-          };
-        });
-        resolve(history);
-      } else {
-        resolve([]); // No bookings found for this userId
-      }
-    }, {
-      onlyOnce: true
+    const bookingsRef = ref(db, 'booking');
+    onValue(bookingsRef, (snapshot) => {
+      const allBookings = [];
+      console.log("Snapshot from Firebase:", snapshot.val()); // Log the raw snapshot from Firebase
+
+      snapshot.forEach((childSnapshot) => {
+        const bookingId = childSnapshot.key;
+        const bookingData = childSnapshot.val();
+        console.log(`Booking ID: ${bookingId}`, bookingData); // Log each booking ID and its data
+
+        allBookings.push({ bookingId, ...bookingData });
+      });
+
+      console.log("All bookings:", allBookings); // Log the final array of all bookings
+      resolve(allBookings);
     }, (error) => {
+      console.error("Error fetching bookings:", error); // Log any errors
       reject(error);
     });
   });
