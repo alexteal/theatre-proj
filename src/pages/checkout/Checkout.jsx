@@ -5,7 +5,7 @@ import { BookingContext } from "../../context/BookingContext";
 import { AuthContext } from "../../context/AuthContext";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import { fetchUserData, saveBookingData } from "../../dataService";
+import { fetchUserData, saveBookingData, updateMovieShowtimeData } from "../../dataService";
 import { checkPromo } from "../../components/email/Promos";
 
 function Checkout() {
@@ -22,8 +22,9 @@ function Checkout() {
     registerForPromotion: "",
   });
 
-  const { selectedShowtime, selectedSeats, ages, totalPrice } = bookingDetails;
-  // console.log("bookingDetails", bookingDetails);
+  const { selectedShowtime, selectedSeats, ages, totalPrice, movieId} = bookingDetails;
+   console.log("bookingDetails CHECK HRE PLS", bookingDetails);
+   console.log("WHAT IS THIS IT???", bookingDetails.movieId);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [promoId, setPromoId] = useState("");
@@ -84,7 +85,17 @@ function Checkout() {
       userData
     )
       .then(() => {
-        console.log("Booking and user details saved successfully!");
+        console.log("WHAT IS THIS IT???", bookingDetails.movieId);
+        return updateMovieShowtimeData(
+          movieId,
+          selectedShowtime,
+          selectedSeats,
+          userId
+        );
+      })
+
+      .then(()=> {
+        console.log("Movie showtime data updated sucessfully!");
       })
       .catch((error) => {
         console.error("Error saving details:", error);

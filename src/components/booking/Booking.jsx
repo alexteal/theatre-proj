@@ -53,17 +53,21 @@ function TicketBooking(MovieId) {
   const finalizeBooking = () => {
     let totalPrice = calculateTotalPrice();
     // Gather all the data to pass, including the total price
+    console.log("WHAT DATA IS THIS", movieId)
     const bookingData = {
       selectedShowtime,
       selectedSeats,
       price: totalPrice, // Calculate and pass the total price
+      movieId,
     };
+    console.log("WHAT DATA IS THIS", movieId)
 
     setBookingDetails({
       selectedShowtime: selectedShowtime,
       selectedSeats: selectedSeats,
       ages: ages,
       totalPrice: totalPrice,
+      movieId
     });
 
     // Navigate to Checkout component and pass the data

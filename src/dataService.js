@@ -35,6 +35,24 @@ export const saveBookingDataOLD = (userId, bookingDetails, userData) => {
   return set(bookingRef, bookingData);
 };
 
+export const updateMovieShowtimeData = async (movieId, selectedShowtime, selectedSeats, userId) => {
+  const database = getDatabase(app);
+  const movieRef = ref(database, `active-movies/${movieId}/showtimes/${selectedShowtime}`);
+
+  const movieSnapshot = await get(movieRef);
+  let showtimeData = movieSnapshot.exists() ? movieSnapshot.val() : { totalPeople: 0, seats: {} };
+
+  // Update existing showtime data
+  showtimeData.totalPeople += selectedSeats.length;
+  selectedSeats.forEach(seat => {
+    showtimeData.seats[seat] = userId; // Or any other identifier
+  });
+
+  // Update movie showtime data in Firebase
+  await set(movieRef, showtimeData);
+};
+
+
 // we're storing the entire booking object into the user's tree so that we
 // can recover all of the booking data from each user.
 export const saveBookingData = (userId, bookingDetails, userData) => {
