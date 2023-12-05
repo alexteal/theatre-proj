@@ -17,12 +17,8 @@ const EditProfile = () => {
   const [bookingHistory, setBookingHistory] = useState([]);
 
   useEffect(() => {
-    console.log("Fetching data for userID:", userId);
-  
-    // Fetch user data
     fetchUserData(userId)
       .then((data) => {
-        console.log("Fetched user data:", data);
         setUserData(data);
         setLoading(false);
       })
@@ -94,8 +90,7 @@ const EditProfile = () => {
     setChecked(event.target.checked);
   };
 
-  console.log("THSWDEASDAHUISADSADDSAAS", bookingHistory.booking)
-  
+  console.log("booking history at render:", bookingHistory);
 
   return (
     <>
@@ -232,21 +227,8 @@ const EditProfile = () => {
 
           <div className="booking-history-container">
             <h2>Purchase History</h2>
-            {bookingHistory.length > 0 ? (
-              bookingHistory.map((booking, index) => (
-                <div key={index} className="booking-entry">
-                  <p>Showtime: {booking.ages} </p>
-                  <p>Showtime: {booking.selectedSeats}</p>
-                  <p>Showtime: {booking.selectedShowtime}</p>
-                  <p>Total Price: {booking.totalPrice}</p>
-                  {/* Render other booking details as needed */}
-                </div>
-              ))
-              ) : (
-                <p>No purchase history found.</p>
-            )}
+            {renderBookingHistory}
           </div>
-
         </div>
       </div>
     </>
