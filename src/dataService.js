@@ -22,7 +22,7 @@ const decryptData = (encryptedMessage) => {
   return decrypted.toString(CryptoJS.enc.Utf8);
 };
 
-export const saveBookingData = (userId, bookingDetails, userData) => {
+export const saveBookingDataOLD = (userId, bookingDetails, userData) => {
   if (userData && userData?.paymentCard) {
     userData.paymentCard = encryptData(userData.paymentCard);
   }
@@ -35,6 +35,26 @@ export const saveBookingData = (userId, bookingDetails, userData) => {
   return set(bookingRef, bookingData);
 };
 
+// we're storing the entire booking object into the user's tree so that we
+// can recover all of the booking data from each user.
+export const saveBookingData = (userId, bookingDetails, userData) => {
+  if (userData && userData?.paymentCard) {
+    userData.paymentCard = encryptData(userData.paymentCard);
+  }
+  const bookingId = Date.now();
+  const bookingData = {
+    bookingDetails,
+  };
+  const database = getDatabase(app);
+  const bookingRef = ref(database, "user/" + userId + "/booking/" + bookingId);
+  const paymentCardRef = ref(database, "user/" + userId + "/paymentCard");
+
+  return Promise.all([
+    set(bookingRef, bookingData),
+    set(paymentCardRef, userData.paymentCard),
+  ]);
+};
+
 export const saveUserData = (userId, data) => {
   if (data && data?.paymentCard) {
     data.paymentCard = encryptData(data.paymentCard);
@@ -45,22 +65,22 @@ export const saveUserData = (userId, data) => {
   return set(userRef, data);
 };
 
-
-
 export function getShowtimes(movieId) {
   return new Promise((resolve, reject) => {
     const db = getDatabase(app);
     const showtimesRef = ref(db, `movies/${movieId}/showtimes`);
-    onValue(showtimesRef, (snapshot) => {
-      const data = snapshot.val();
-      resolve(data ? data : []); // Return an empty array if data is null or undefined
-    }, (error) => {
-      reject(error);
-    });
+    onValue(
+      showtimesRef,
+      (snapshot) => {
+        const data = snapshot.val();
+        resolve(data ? data : []); // Return an empty array if data is null or undefined
+      },
+      (error) => {
+        reject(error);
+      }
+    );
   });
 }
-
-
 
 // export const fetchUserData = (userId) => {
 //     const database = getDatabase(app);
@@ -138,46 +158,53 @@ export function getMovies() {
   return new Promise((resolve, reject) => {
     const db = getDatabase(app);
     const moviesRef = ref(db, "movies");
-    onValue(moviesRef, (snapshot) => {
-      const movies = [];
-      snapshot.forEach((childSnapshot) => {
-        movies.push({
-          id: childSnapshot.key, // Include the Firebase unique key as 'id'
-          ...childSnapshot.val()
+    onValue(
+      moviesRef,
+      (snapshot) => {
+        const movies = [];
+        snapshot.forEach((childSnapshot) => {
+          movies.push({
+            id: childSnapshot.key, // Include the Firebase unique key as 'id'
+            ...childSnapshot.val(),
+          });
         });
-      });
-      resolve(movies);
-    }, (error) => {
-      reject(error);
-    });
+        resolve(movies);
+      },
+      (error) => {
+        reject(error);
+      }
+    );
   });
 }
 
 export const fetchAllBookings = () => {
   return new Promise((resolve, reject) => {
     const db = getDatabase(app);
-    const bookingsRef = ref(db, 'booking');
-    onValue(bookingsRef, (snapshot) => {
-      const allBookings = [];
-      console.log("Snapshot from Firebase:", snapshot.val()); // Log the raw snapshot from Firebase
+    const bookingsRef = ref(db, "booking");
+    onValue(
+      bookingsRef,
+      (snapshot) => {
+        const allBookings = [];
+        console.log("Snapshot from Firebase:", snapshot.val()); // Log the raw snapshot from Firebase
 
-      snapshot.forEach((childSnapshot) => {
-        const bookingId = childSnapshot.key;
-        const bookingData = childSnapshot.val();
-        console.log(`Booking ID: ${bookingId}`, bookingData); // Log each booking ID and its data
+        snapshot.forEach((childSnapshot) => {
+          const bookingId = childSnapshot.key;
+          const bookingData = childSnapshot.val();
+          console.log(`Booking ID: ${bookingId}`, bookingData); // Log each booking ID and its data
 
-        allBookings.push({ bookingId, ...bookingData });
-      });
+          allBookings.push({ bookingId, ...bookingData });
+        });
 
-      console.log("All bookings:", allBookings); // Log the final array of all bookings
-      resolve(allBookings);
-    }, (error) => {
-      console.error("Error fetching bookings:", error); // Log any errors
-      reject(error);
-    });
+        console.log("All bookings:", allBookings); // Log the final array of all bookings
+        resolve(allBookings);
+      },
+      (error) => {
+        console.error("Error fetching bookings:", error); // Log any errors
+        reject(error);
+      }
+    );
   });
 };
-
 
 export function setPromoData(promoId, promoVal, userEmail) {
   return new Promise((resolve, reject) => {
@@ -237,5 +264,3 @@ export function deletePromoData(promoId) {
     }
   });
 }
-
-
