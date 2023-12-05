@@ -130,8 +130,9 @@ const ManagePromo = () => {
                     placeholder="jane.doe@gmail.com"
                     value={to}
                     onChange={(e) => setTo(e.target.value)}
-                    required
                   />
+                  If left blank, this will be sent to all users who are
+                  registered with promotions.
                 </label>
               </div>
               <div className="input-group">
