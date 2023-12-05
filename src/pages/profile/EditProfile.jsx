@@ -14,36 +14,49 @@ const EditProfile = () => {
   const { currentUser } = useContext(AuthContext);
   const [checked, setChecked] = useState(false);
   const userId = currentUser?.uid;
-  const [bookingHistory, setBookingHistory] = useState([]);
+  const [bookingHistory, setBookingHistory] = useState(null);
+  const [renderBookingHistory, setRenderBookingHistory] = useState(null);
 
   useEffect(() => {
     fetchUserData(userId)
       .then((data) => {
         setUserData(data);
         setLoading(false);
+        // Fetch booking history from user data
+        if (data && data.booking) {
+          console.log("User bookings fetched from user data:", data.booking);
+          setBookingHistory(data.booking);
+          console.log(bookingHistory);
+        }
       })
       .catch((err) => {
         console.error("Error fetching user data:", err);
         setError("Error fetching user data.");
         setLoading(false);
       });
-  
-    // Fetch booking history
-    fetchAllBookings()
-      .then((allBookings) => {
-        console.log("All bookings fetched:", allBookings);
-        const userBookings = allBookings.filter(booking => 
-          booking.userData && booking.userData.email === userData.email
-        );
-        console.log("Filtered user bookings:", userBookings);
-        setBookingHistory(userBookings);
-      })
-      .catch((error) => {
-        console.error("Error fetching booking history:", error);
-        setError("Error fetching booking history.");
-      });
-  }, [userId, userData.email]);
-  
+  }, []);
+  useEffect(() => {
+    if (bookingHistory) {
+      const bookingHistoryJSX = Object.entries(bookingHistory).map(
+        ([key, value]) => {
+          return (
+            <div key={key}>
+              <h3>Booking ID: {key}</h3>
+              <p>Ages: {value.bookingDetails.ages.join(", ")}</p>
+              <p>
+                Selected Seats: {value.bookingDetails.selectedSeats.join(", ")}
+              </p>
+              <p>Selected Showtime: {value.bookingDetails.selectedShowtime}</p>
+              <p>Total Price: {value.bookingDetails.totalPrice}</p>
+            </div>
+          );
+        }
+      );
+      setRenderBookingHistory(bookingHistoryJSX);
+    } else {
+      setRenderBookingHistory(<p>No purchase history found.</p>);
+    }
+  }, [bookingHistory]);
 
   const handleCardNumberChange = (e) => {
     const val = e.target.value.substring(0, 16);
