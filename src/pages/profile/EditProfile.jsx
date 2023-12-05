@@ -5,7 +5,6 @@ import { reauthenticateUser, updateUserPassword } from "../../firebase";
 import "./edit-profile.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import { fetchAllBookings } from "../../dataService";
 
 const EditProfile = () => {
   const [userData, setUserData] = useState({});
@@ -26,7 +25,6 @@ const EditProfile = () => {
         if (data && data.booking) {
           console.log("User bookings fetched from user data:", data.booking);
           setBookingHistory(data.booking);
-          console.log(bookingHistory);
         }
       })
       .catch((err) => {
@@ -34,7 +32,7 @@ const EditProfile = () => {
         setError("Error fetching user data.");
         setLoading(false);
       });
-  }, []);
+  }, [userId]);
   useEffect(() => {
     if (bookingHistory) {
       const bookingHistoryJSX = Object.entries(bookingHistory).map(
