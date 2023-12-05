@@ -2,7 +2,8 @@ const functions = require("@google-cloud/functions-framework");
 const sgMail = require("@sendgrid/mail");
 
 // Set your SendGrid API key here
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+const SENDGRID_API_KEY = sgMail.setApiKey(SENDGRID_API_KEY);
+
 // Define the Cloud Function
 functions.http("sendEmail", (req, res) => {
   // Set CORS headers for preflight requests
@@ -41,14 +42,14 @@ functions.http("sendEmail", (req, res) => {
     sgMail
       .send(msg)
       .then(() => {
-        res.status(200).send("Email sent successfully");
+        res.status(200).json({ message: "Email sent successfully", code: 200 });
       })
       .catch((error) => {
         console.error(error);
         if (error.response) {
           console.error(error.response.body);
         }
-        res.status(500).send("Error sending email");
+        res.status(500).json({ message: "Error sending email", code: 500 });
       });
   }
 });
