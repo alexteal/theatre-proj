@@ -105,6 +105,18 @@ export function getShowtimes(movieId) {
 //     const userRef = ref(database, 'user/' + userId);
 //     return get(userRef);
 // };
+export const fetchAllUserData = async () => {
+  const database = getDatabase(app);
+  const userRef = ref(database, "user/");
+  try {
+    const snapshot = await get(userRef);
+    const data = snapshot.val();
+    console.log(data);
+    return data;
+  } catch (e) {
+    console.log(e);
+  }
+};
 
 export const fetchUserData = async (userId) => {
   const database = getDatabase(app);

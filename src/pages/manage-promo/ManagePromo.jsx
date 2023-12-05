@@ -5,6 +5,7 @@ import Navbar from "../../components/navbar/Navbar";
 import { AuthContext } from "../../context/AuthContext";
 import { createPromo } from "../../components/email/Promos";
 import { useContext } from "react";
+import { fetchAllUserData } from "../../dataService";
 
 const ManagePromo = () => {
   const { currentUser } = useContext(AuthContext);
@@ -14,29 +15,83 @@ const ManagePromo = () => {
   const [promoId, setPromoId] = useState("");
   const [promoVal, setPromoVal] = useState("");
   const from = "totallyrealmovies@gmail.com"; // Hardcoded 'from' email address
+  //async function sendPromotions() {
+  //  // Fetch all user data
+  //  const allUserData = await fetchAllUserData();
+  //  // Initialize recipient list
+  //  let recipientList = [];
+  //  // Loop through user data
+  //  for (let userId in allUserData) {
+  //    // Check if user has registerForPromotions flag set as true
+  //    if (allUserData[userId].registerforpromotions) {
+  //      // Add their email to recipientList
+  //      recipientList.push(allUserData[userId].email);
+  //    }
+  //  }
+  //  // Loop through recipientList
+  //  for (let i = 0; i < recipientList.length; i++) {
+  //    // Call template function for each email
+  //    templateFunction(recipientList[i]);
+  //  }
+  //}
 
-  const sendEmail = async (to, from, subject, text, html) => {
-    // Prepare the body of the POST request
-    const body = JSON.stringify({ to, from, subject, text, html });
+  const sendEmail = async (from, subject, text, html, to = null) => {
+    const body = JSON.stringify({ from, subject, text, html });
     const url = "https://functions-sendemail-4pcopkyfsa-uc.a.run.app";
+    let recipientList = [];
 
-    // Make the POST request
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: body,
-    });
-    console.log("request body:");
-    console.log(body);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    // If 'to' parameter is not blank, use it as the recipient
+    if (to) {
+      recipientList.push(to);
+    } else {
+      // If 'to' parameter is blank, use existing code to fetch all user data
+      const allUserData = await fetchAllUserData();
+      console.log(allUserData);
+      // Loop through user data
+      for (let userId in allUserData) {
+        // Check if user has registerForPromotion flag set as true
+        if (allUserData[userId].registerForPromotion) {
+          // Add their email to recipientList
+          recipientList.push(allUserData[userId].email);
+        }
+      }
     }
 
-    return await response.json();
+    // Loop through recipientList
+    for (let i = 0; i < recipientList.length; i++) {
+      const emailBody = JSON.parse(body);
+      emailBody.to = recipientList[i];
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailBody),
+      });
+      console.log("request body:");
+      console.log(body);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    }
   };
+  //    // Make the POST request
+  //    const response = await fetch(url, {
+  //      method: "POST",
+  //      headers: {
+  //        "Content-Type": "application/json",
+  //      },
+  //      body: body,
+  //    });
+  //    console.log("request body:");
+  //    console.log(body);
+  //
+  //    if (!response.ok) {
+  //      throw new Error(`HTTP error! status: ${response.status}`);
+  //    }
+  //
+  //    return await response.json();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,18 +99,12 @@ const ManagePromo = () => {
       const updatedText =
         text + " promoId: " + promoId + " promoVal: " + promoVal;
       const html = "<strong>" + updatedText + "</strong>";
-      const response = await sendEmail(to, from, subject, text, html);
+      const response = await sendEmail(from, subject, text, html, to);
       console.log(response); // Log the response from the server
-      alert("Email successfully sent!");
       if (response.code === 200) {
-        const userId = currentUser?.uid;
-        const response = createPromo(userId, promoId, promoVal);
-        console.log(response);
-        if (response === false) {
-          alert("Promo Creation Failed");
-        } else {
-          alert("Promo Created");
-        }
+        alert("Email successfully sent!");
+      } else {
+        alert("Email failed");
       }
     } catch (error) {
       console.error("Error sending email:", error);
