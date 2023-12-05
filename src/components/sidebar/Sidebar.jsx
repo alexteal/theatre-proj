@@ -2,14 +2,16 @@ import "./sidebar.scss";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import MailLockIcon from "@mui/icons-material/MailLock";
 import { Link, useNavigate } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext } from "react";
 import { signOutUser } from "../../firebase";
-
+import { AuthContext } from "../../context/AuthContext";
 const Sidebar = () => {
   const { dispatch } = useContext(DarkModeContext);
-
+  const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
   const handleLogout = () => {
     signOutUser();
@@ -36,6 +38,23 @@ const Sidebar = () => {
               <span>Movies</span>
             </li>
           </Link>
+          {currentUser && currentUser.isAdmin ? (
+            <>
+              <Link to="/manage-promo" style={{ textDecoration: "none" }}>
+                <li>
+                  <MailLockIcon className="icon" />
+                  <span>Manage Promos</span>
+                </li>
+              </Link>
+              <Link to="/manage-movies" style={{ textDecoration: "none" }}>
+                <li>
+                  <AdminPanelSettingsIcon className="icon" />
+                  <span>Manage Movies</span>
+                </li>
+              </Link>
+            </>
+          ) : null}
+
           <p className="title">USER</p>
 
           <Link to="/edit-profile" style={{ textDecoration: "none" }}>
