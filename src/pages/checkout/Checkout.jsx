@@ -52,7 +52,7 @@ function Checkout() {
     setDiscount(response);
     console.log(discount);
     if (!isNaN(response) && response !== false) {
-      setFinalPrice(totalPrice - totalPrice / response);
+      setFinalPrice((totalPrice - totalPrice * (response * 0.01)).toFixed(2));
       console.log("setfinalprice run");
     } else {
       setFinalPrice(totalPrice);
