@@ -15,25 +15,6 @@ const ManagePromo = () => {
   const [promoId, setPromoId] = useState("");
   const [promoVal, setPromoVal] = useState("");
   const from = "totallyrealmovies@gmail.com"; // Hardcoded 'from' email address
-  //async function sendPromotions() {
-  //  // Fetch all user data
-  //  const allUserData = await fetchAllUserData();
-  //  // Initialize recipient list
-  //  let recipientList = [];
-  //  // Loop through user data
-  //  for (let userId in allUserData) {
-  //    // Check if user has registerForPromotions flag set as true
-  //    if (allUserData[userId].registerforpromotions) {
-  //      // Add their email to recipientList
-  //      recipientList.push(allUserData[userId].email);
-  //    }
-  //  }
-  //  // Loop through recipientList
-  //  for (let i = 0; i < recipientList.length; i++) {
-  //    // Call template function for each email
-  //    templateFunction(recipientList[i]);
-  //  }
-  //}
 
   const sendEmail = async (from, subject, text, html, to = null) => {
     const body = JSON.stringify({ from, subject, text, html });
@@ -76,22 +57,6 @@ const ManagePromo = () => {
       return await response.json();
     }
   };
-  //    // Make the POST request
-  //    const response = await fetch(url, {
-  //      method: "POST",
-  //      headers: {
-  //        "Content-Type": "application/json",
-  //      },
-  //      body: body,
-  //    });
-  //    console.log("request body:");
-  //    console.log(body);
-  //
-  //    if (!response.ok) {
-  //      throw new Error(`HTTP error! status: ${response.status}`);
-  //    }
-  //
-  //    return await response.json();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
